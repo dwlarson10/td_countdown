@@ -33,37 +33,90 @@
         }
 
         .slideshow img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            position: fixed;
+            width: 350px;
+            height: 250px;
             object-fit: cover;
             opacity: 0;
-            transition: opacity 2s ease-in-out, transform 8s ease-out;
-            transform: scale(1);
+            transition: opacity 1.5s ease-in-out;
+            background: white;
+            padding: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-radius: 2px;
+        }
+
+        .slideshow img:nth-child(1) {
+            top: 10%;
+            left: 5%;
+            transform: rotate(-8deg);
+            z-index: 1;
+        }
+
+        .slideshow img:nth-child(2) {
+            top: 15%;
+            right: 8%;
+            transform: rotate(5deg);
+            z-index: 2;
+        }
+
+        .slideshow img:nth-child(3) {
+            bottom: 15%;
+            left: 10%;
+            transform: rotate(4deg);
+            z-index: 3;
+        }
+
+        .slideshow img:nth-child(4) {
+            bottom: 20%;
+            right: 5%;
+            transform: rotate(-6deg);
+            z-index: 4;
+        }
+
+        .slideshow img:nth-child(5) {
+            top: 50%;
+            left: 3%;
+            transform: translateY(-50%) rotate(7deg);
+            z-index: 5;
+        }
+
+        .slideshow img:nth-child(6) {
+            top: 50%;
+            right: 3%;
+            transform: translateY(-50%) rotate(-5deg);
+            z-index: 6;
+        }
+
+        .slideshow img:nth-child(7) {
+            top: 5%;
+            left: 50%;
+            transform: translateX(-50%) rotate(3deg);
+            z-index: 7;
+        }
+
+        .slideshow img:nth-child(8) {
+            bottom: 5%;
+            left: 50%;
+            transform: translateX(-50%) rotate(-4deg);
+            z-index: 8;
+        }
+
+        .slideshow img:nth-child(n+9) {
+            top: 30%;
+            left: 15%;
+            transform: rotate(-2deg);
+            z-index: 9;
         }
 
         .slideshow img.active {
             opacity: 1;
-            transform: scale(1.1);
-        }
-
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 1;
         }
 
         .container {
             text-align: center;
             padding: 2rem;
             position: relative;
-            z-index: 2;
+            z-index: 10;
         }
 
         h1 {
@@ -99,6 +152,42 @@
 
             .label {
                 font-size: 1rem;
+            }
+
+            .slideshow img {
+                width: 200px;
+                height: 150px;
+                padding: 10px;
+            }
+
+            .slideshow img:nth-child(1) {
+                top: 5%;
+                left: 2%;
+            }
+
+            .slideshow img:nth-child(2) {
+                top: 5%;
+                right: 2%;
+            }
+
+            .slideshow img:nth-child(3) {
+                bottom: 5%;
+                left: 2%;
+            }
+
+            .slideshow img:nth-child(4) {
+                bottom: 5%;
+                right: 2%;
+            }
+
+            .slideshow img:nth-child(5) {
+                top: 40%;
+                left: 2%;
+            }
+
+            .slideshow img:nth-child(6) {
+                top: 40%;
+                right: 2%;
             }
         }
     </style>
@@ -140,7 +229,13 @@
             'images/image2.JPG',
             'images/image3.jpg',
             'images/image4.jpg',
-            'images/image5.jpg'
+            'images/image5.jpg',
+            'image/image6.jpg',
+            'images/image7.JPG',
+            'images/image8.jpg',
+            'images/image9.jpg',
+            'images/image10.jpg',
+            'images/image11.jpg'
             // Add more image paths as needed
         ];
 
@@ -152,19 +247,23 @@
             const img = document.createElement('img');
             img.src = src;
             img.alt = 'Slideshow image';
-            if (index === 0) {
+            if (index === 0 || index === 1) {
                 img.classList.add('active');
             }
             slideshow.appendChild(img);
         });
 
-        // Cycle through images
+        // Cycle through images - keep 2 visible at a time
         function nextImage() {
             if (images.length === 0) return;
 
             const allImages = slideshow.querySelectorAll('img');
-            allImages[currentIndex].classList.remove('active');
 
+            // Calculate which image to fade out (the oldest of the two currently visible)
+            const oldestIndex = currentIndex === 0 ? images.length - 1 : currentIndex - 1;
+            allImages[oldestIndex].classList.remove('active');
+
+            // Move to next image and make it active
             currentIndex = (currentIndex + 1) % images.length;
             allImages[currentIndex].classList.add('active');
         }
