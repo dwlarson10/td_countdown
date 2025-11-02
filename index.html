@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Larson Seattle Takedown Countdown</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slideshow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .slideshow img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 2s ease-in-out, transform 8s ease-out;
+            transform: scale(1);
+        }
+
+        .slideshow img.active {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1;
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .countdown {
+            font-size: 8rem;
+            font-weight: 700;
+            line-height: 1;
+            text-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .label {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-top: 1rem;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .countdown {
+                font-size: 4rem;
+            }
+
+            .label {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="slideshow" id="slideshow"></div>
+    <div class="overlay"></div>
+    <div class="container">
+        <h1>Days Till Larson Seattle Takedown</h1>
+        <div class="countdown" id="countdown">-</div>
+        <div class="label">minutes remaining</div>
+    </div>
+
+    <script>
+        // Set your target date here (YYYY, MM-1, DD) - month is 0-indexed
+        const targetDate = new Date(2025, 10, 27, 0, 0, 0); // Thanksgiving 2024: November 27
+
+        function updateCountdown() {
+            const now = new Date();
+            const difference = targetDate - now;
+
+            if (difference > 0) {
+                const minutes = Math.floor(difference / (1000 * 60));
+                document.getElementById('countdown').textContent = minutes.toLocaleString();
+            } else {
+                document.getElementById('countdown').textContent = '0';
+            }
+        }
+
+        // Update immediately
+        updateCountdown();
+
+        // Update every minute (60000 milliseconds)
+        setInterval(updateCountdown, 60000);
+
+        // Image Slideshow
+        const images = [
+            'images/image1.jpg',
+            'images/image2.JPG',
+            'images/image3.jpg',
+            'images/image4.jpg',
+            'images/image5.jpg'
+            // Add more image paths as needed
+        ];
+
+        const slideshow = document.getElementById('slideshow');
+        let currentIndex = 0;
+
+        // Create img elements for each image
+        images.forEach((src, index) => {
+            const img = document.createElement('img');
+            img.src = src;
+            img.alt = 'Slideshow image';
+            if (index === 0) {
+                img.classList.add('active');
+            }
+            slideshow.appendChild(img);
+        });
+
+        // Cycle through images
+        function nextImage() {
+            if (images.length === 0) return;
+
+            const allImages = slideshow.querySelectorAll('img');
+            allImages[currentIndex].classList.remove('active');
+
+            currentIndex = (currentIndex + 1) % images.length;
+            allImages[currentIndex].classList.add('active');
+        }
+
+        // Change image every 5 seconds
+        if (images.length > 0) {
+            setInterval(nextImage, 5000);
+        }
+    </script>
+</body>
+</html>
