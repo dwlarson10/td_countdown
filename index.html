@@ -21,6 +21,22 @@
             color: white;
             position: relative;
             overflow: hidden;
+            transition: background 1s ease-in-out;
+        }
+
+        body.slapsgiving-mode {
+            background: url('images/image2.jpg') center center / cover no-repeat;
+        }
+
+        body.slapsgiving-mode::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 0;
         }
 
         .slideshow {
@@ -30,6 +46,12 @@
             width: 100%;
             height: 100%;
             z-index: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        body.slapsgiving-mode .slideshow {
+            opacity: 0;
+            pointer-events: none;
         }
 
         .slideshow img {
@@ -43,6 +65,17 @@
             padding: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             border-radius: 2px;
+            cursor: pointer;
+        }
+
+        .slideshow img.clickable {
+            cursor: pointer;
+        }
+
+        .slideshow img.clickable:hover {
+            transform: scale(1.05) !important;
+            transition: transform 0.3s ease-in-out, opacity 1.5s ease-in-out;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
         }
 
         .slideshow img:nth-child(1) {
@@ -205,6 +238,27 @@
         // Set your target date here (YYYY, MM-1, DD) - month is 0-indexed
         const targetDate = new Date(2025, 10, 27, 0, 0, 0); // Thanksgiving 2024: November 27
 
+        let isSlapsgivingMode = false;
+        let slapsgivingStartTime = Date.now();
+
+        function checkSlapsgivingToggle() {
+            const timeSinceLastToggle = Date.now() - slapsgivingStartTime;
+            const tenMinutes = 10 * 60 * 1000; // 10 minutes in milliseconds
+
+            if (timeSinceLastToggle >= tenMinutes) {
+                isSlapsgivingMode = !isSlapsgivingMode;
+                slapsgivingStartTime = Date.now();
+
+                if (isSlapsgivingMode) {
+                    document.body.classList.add('slapsgiving-mode');
+                    document.querySelector('h1').textContent = 'Slapsgiving Starts In';
+                } else {
+                    document.body.classList.remove('slapsgiving-mode');
+                    document.querySelector('h1').textContent = 'Days Till Larson Seattle Takedown';
+                }
+            }
+        }
+
         function updateCountdown() {
             const now = new Date();
             const difference = targetDate - now;
@@ -220,7 +274,10 @@
         // Update immediately
         updateCountdown();
 
-        // Update every minute (60000 milliseconds)
+        // Check for slapsgiving toggle every 10 seconds
+        setInterval(checkSlapsgivingToggle, 10000);
+
+        // Update countdown every minute (60000 milliseconds)
         setInterval(updateCountdown, 60000);
 
         // Image Slideshow
@@ -230,17 +287,22 @@
             'images/image3.jpg',
             'images/image4.jpg',
             'images/image5.jpg',
-            'image/image6.jpg',
+            'images/image6.jpg',
             'images/image7.JPG',
             'images/image8.jpg',
             'images/image9.jpg',
             'images/image10.jpg',
-            'images/image11.jpg'
+            'images/image11.jpg',
+            'images/image12.jpg',
+            'images/image13.jpeg',
             // Add more image paths as needed
         ];
 
         const slideshow = document.getElementById('slideshow');
         let currentIndex = 0;
+
+        // Set which image index should be clickable (0-based index)
+        const clickableImageIndex = 4; // Change this to the image you want to be clickable
 
         // Create img elements for each image
         images.forEach((src, index) => {
@@ -250,6 +312,15 @@
             if (index === 0 || index === 1) {
                 img.classList.add('active');
             }
+
+            // Make specific image clickable
+            if (index === clickableImageIndex) {
+                img.classList.add('clickable');
+                img.addEventListener('click', function() {
+                    window.location.href = 'video.html';
+                });
+            }
+
             slideshow.appendChild(img);
         });
 
