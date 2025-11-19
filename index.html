@@ -236,14 +236,14 @@
 
     <script>
         // Set your target date here (YYYY, MM-1, DD) - month is 0-indexed
-        const targetDate = new Date(2025, 10, 27, 0, 0, 0); // Thanksgiving 2024: November 27
+        const targetDate = new Date(2025, 10, 24, 0, 0, 0); // Thanksgiving 2024: November 27
 
         let isSlapsgivingMode = false;
         let slapsgivingStartTime = Date.now();
 
         function checkSlapsgivingToggle() {
             const timeSinceLastToggle = Date.now() - slapsgivingStartTime;
-            const tenMinutes = 10 * 60 * 1000; // 10 minutes in milliseconds
+            const tenMinutes = 3 * 60 * 1000; // 10 minutes in milliseconds
 
             if (timeSinceLastToggle >= tenMinutes) {
                 isSlapsgivingMode = !isSlapsgivingMode;
