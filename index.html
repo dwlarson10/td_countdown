@@ -24,19 +24,22 @@
             transition: background 1s ease-in-out;
         }
 
-        body.slapsgiving-mode {
-            background: url('images/slaps.jpg') center center / cover no-repeat;
+        /* Dedicated fixed layer for Slapsgiving. It is always in the DOM so the
+           image preloads on page load; toggling only animates its opacity,
+           which repaints reliably across browsers. */
+        .slaps-bg {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+                        url('images/slaps.jpg') center center / cover no-repeat;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            z-index: 0;
+            pointer-events: none;
         }
 
-        body.slapsgiving-mode::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 0;
+        body.slapsgiving-mode .slaps-bg {
+            opacity: 1;
         }
 
         .slideshow {
@@ -158,6 +161,7 @@
             margin-bottom: 2rem;
             text-transform: uppercase;
             letter-spacing: 2px;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.55);
         }
 
         .countdown {
@@ -174,6 +178,105 @@
             opacity: 0.9;
         }
 
+        .countdown-grid {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+
+        .unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 90px;
+        }
+
+        .unit .num {
+            font-size: 5rem;
+            font-weight: 700;
+            line-height: 1;
+            text-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .unit .unit-label {
+            font-size: 1rem;
+            font-weight: 300;
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.85;
+        }
+
+        .unit:first-child .num {
+            color: #ffd86b;
+        }
+
+        .celebrate {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 1rem 0;
+        }
+
+        .info-card {
+            margin: 2.5rem auto 0;
+            max-width: 440px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: left;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .info-icon {
+            font-size: 1.6rem;
+            flex-shrink: 0;
+            width: 2rem;
+            text-align: center;
+        }
+
+        .info-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .info-sub {
+            font-size: 0.9rem;
+            opacity: 0.85;
+            font-weight: 300;
+        }
+
+        .calendar-btn {
+            width: 100%;
+            margin-top: 0.25rem;
+            padding: 0.9rem 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #764ba2;
+            background: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+        }
+
+        .calendar-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+        }
+
         @media (max-width: 768px) {
             h1 {
                 font-size: 1.5rem;
@@ -185,6 +288,30 @@
 
             .label {
                 font-size: 1rem;
+            }
+
+            .unit .num {
+                font-size: 3rem;
+            }
+
+            .unit {
+                flex: 0 0 38%;
+                min-width: 0;
+            }
+
+            .countdown-grid {
+                gap: 1rem 0.5rem;
+                max-width: 340px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .info-card {
+                max-width: 88%;
+            }
+
+            .celebrate {
+                font-size: 1.8rem;
             }
 
             .slideshow img {
@@ -226,12 +353,36 @@
     </style>
 </head>
 <body>
+    <div class="slaps-bg"></div>
     <div class="slideshow" id="slideshow"></div>
     <div class="overlay"></div>
     <div class="container">
         <h1>Days Till Larson Philadelphia Takedown</h1>
-        <div class="countdown" id="countdown">-</div>
-        <div class="label">minutes remaining</div>
+        <div class="countdown-grid" id="countdownGrid">
+            <div class="unit"><span class="num" id="days">-</span><span class="unit-label">days</span></div>
+            <div class="unit"><span class="num" id="hours">-</span><span class="unit-label">hours</span></div>
+            <div class="unit"><span class="num" id="minutes">-</span><span class="unit-label">minutes</span></div>
+            <div class="unit"><span class="num" id="seconds">-</span><span class="unit-label">seconds</span></div>
+        </div>
+        <div class="celebrate" id="celebrate" style="display:none;">🦃 It's Thanksgiving! Happy Takedown! 🦃</div>
+
+        <div class="info-card">
+            <div class="info-row">
+                <span class="info-icon">📅</span>
+                <div>
+                    <div class="info-title">Thursday, November 26, 2026</div>
+                    <div class="info-sub">Dinner at 3:00 PM · get here whenever you want</div>
+                </div>
+            </div>
+            <div class="info-row">
+                <span class="info-icon">📍</span>
+                <div>
+                    <div class="info-title">Philadelphia, PA</div>
+                    <div class="info-sub">Hosted by Dan this year · full address sent to family</div>
+                </div>
+            </div>
+            <button class="calendar-btn" id="calendarBtn">＋ Add to Calendar</button>
+        </div>
     </div>
 
     <script>
@@ -264,10 +415,17 @@
             const difference = targetDate - now;
 
             if (difference > 0) {
-                const minutes = Math.floor(difference / (1000 * 60));
-                document.getElementById('countdown').textContent = minutes.toLocaleString();
+                const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+                const minutes = Math.floor((difference / (1000 * 60)) % 60);
+                const seconds = Math.floor((difference / 1000) % 60);
+                document.getElementById('days').textContent = days.toLocaleString();
+                document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+                document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+                document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
             } else {
-                document.getElementById('countdown').textContent = '0';
+                document.getElementById('countdownGrid').style.display = 'none';
+                document.getElementById('celebrate').style.display = 'block';
             }
         }
 
@@ -277,8 +435,39 @@
         // Check for slapsgiving toggle every 10 seconds
         setInterval(checkSlapsgivingToggle, 10000);
 
-        // Update countdown every minute (60000 milliseconds)
-        setInterval(updateCountdown, 60000);
+        // Update countdown every second so it ticks live
+        setInterval(updateCountdown, 1000);
+
+        // Add to Calendar — download an .ics file that works with Apple,
+        // Google, and Outlook calendars. Times are local (America/New_York).
+        const icsContent = [
+            'BEGIN:VCALENDAR',
+            'VERSION:2.0',
+            'PRODID:-//Larson Takedown//Thanksgiving//EN',
+            'CALSCALE:GREGORIAN',
+            'BEGIN:VEVENT',
+            'UID:larson-thanksgiving-2026@dwlarson10.github.io',
+            'DTSTAMP:20260831T000000Z',
+            'DTSTART:20261126T150000',
+            'DTEND:20261126T190000',
+            'SUMMARY:Larson Thanksgiving — Philadelphia',
+            'LOCATION:Philadelphia, PA',
+            'DESCRIPTION:Dinner at 3:00 PM. Get here whenever you want! Hosted by Dan in Philadelphia this year.',
+            'END:VEVENT',
+            'END:VCALENDAR'
+        ].join('\r\n');
+
+        document.getElementById('calendarBtn').addEventListener('click', function() {
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'larson-thanksgiving-2026.ics';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
 
         // Image Slideshow
         // Photos are auto-discovered: just drop numbered files into the images
