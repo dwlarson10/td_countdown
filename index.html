@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Larson Seattle Takedown Countdown</title>
+    <title>Larson Philadelphia Takedown Countdown</title>
     <style>
         * {
             margin: 0;
@@ -229,14 +229,14 @@
     <div class="slideshow" id="slideshow"></div>
     <div class="overlay"></div>
     <div class="container">
-        <h1>Days Till Larson Seattle Takedown</h1>
+        <h1>Days Till Larson Philadelphia Takedown</h1>
         <div class="countdown" id="countdown">-</div>
         <div class="label">minutes remaining</div>
     </div>
 
     <script>
         // Set your target date here (YYYY, MM-1, DD) - month is 0-indexed
-        const targetDate = new Date(2025, 10, 24, 0, 0, 0); // Thanksgiving 2024: November 27
+        const targetDate = new Date(2026, 10, 26, 0, 0, 0); // Thanksgiving 2026: November 26
 
         let isSlapsgivingMode = false;
         let slapsgivingStartTime = Date.now();
@@ -254,7 +254,7 @@
                     document.querySelector('h1').textContent = 'Slapsgiving Starts In';
                 } else {
                     document.body.classList.remove('slapsgiving-mode');
-                    document.querySelector('h1').textContent = 'Days Till Larson Seattle Takedown';
+                    document.querySelector('h1').textContent = 'Days Till Larson Philadelphia Takedown';
                 }
             }
         }
@@ -281,48 +281,68 @@
         setInterval(updateCountdown, 60000);
 
         // Image Slideshow
-        const images = [
-            'images/image1.jpg',
-            'images/image2.JPG',
-            'images/image3.jpg',
-            'images/image4.jpg',
-            'images/image5.jpg',
-            'images/image6.jpg',
-            'images/image7.JPG',
-            'images/image8.jpg',
-            'images/image9.jpg',
-            'images/image10.jpg',
-            'images/image11.jpg',
-            'images/image12.jpg',
-            'images/image13.jpeg',
-            // Add more image paths as needed
-        ];
-
+        // Photos are auto-discovered: just drop numbered files into the images
+        // folder (images/photo_1.jpg, images/photo_2.jpg, ...) and they show up.
+        // No need to edit this file. Discovery stops at the first missing number.
         const slideshow = document.getElementById('slideshow');
         let currentIndex = 0;
+        let images = [];
 
         // Set which image index should be clickable (0-based index)
         const clickableImageIndex = 4; // Change this to the image you want to be clickable
 
-        // Create img elements for each image
-        images.forEach((src, index) => {
-            const img = document.createElement('img');
-            img.src = src;
-            img.alt = 'Slideshow image';
-            if (index === 0 || index === 1) {
-                img.classList.add('active');
-            }
+        // Probe images/photo_N.jpg starting at 1, stopping at the first gap.
+        function probeImage(src) {
+            return new Promise((resolve) => {
+                const test = new Image();
+                test.onload = () => resolve(true);
+                test.onerror = () => resolve(false);
+                test.src = src;
+            });
+        }
 
-            // Make specific image clickable
-            if (index === clickableImageIndex) {
-                img.classList.add('clickable');
-                img.addEventListener('click', function() {
-                    window.location.href = 'video.html';
-                });
+        async function discoverImages() {
+            const found = [];
+            let i = 1;
+            // Cap the scan so a stray gap can never loop forever.
+            while (i <= 500) {
+                const src = `images/photo_${i}.jpg`;
+                if (await probeImage(src)) {
+                    found.push(src);
+                    i++;
+                } else {
+                    break;
+                }
             }
+            return found;
+        }
 
-            slideshow.appendChild(img);
-        });
+        function buildSlideshow(srcs) {
+            images = srcs;
+            srcs.forEach((src, index) => {
+                const img = document.createElement('img');
+                img.src = src;
+                img.alt = 'Slideshow image';
+                if (index === 0 || index === 1) {
+                    img.classList.add('active');
+                }
+
+                // Make specific image clickable
+                if (index === clickableImageIndex) {
+                    img.classList.add('clickable');
+                    img.addEventListener('click', function() {
+                        window.location.href = 'video.html';
+                    });
+                }
+
+                slideshow.appendChild(img);
+            });
+
+            // Change image every 5 seconds
+            if (images.length > 0) {
+                setInterval(nextImage, 5000);
+            }
+        }
 
         // Cycle through images - keep 2 visible at a time
         function nextImage() {
@@ -339,10 +359,7 @@
             allImages[currentIndex].classList.add('active');
         }
 
-        // Change image every 5 seconds
-        if (images.length > 0) {
-            setInterval(nextImage, 5000);
-        }
+        discoverImages().then(buildSlideshow);
     </script>
 </body>
 </html>
