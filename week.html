@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Larson Thanksgiving Week</title>
+    <style>
+        :root {
+            --bg1: #667eea;
+            --bg2: #764ba2;
+            --cream: #fff8ef;
+            --ink: #3a2b1f;
+            --muted: #8a7a6d;
+            --amber: #f2b705;
+            --pumpkin: #e07a3f;
+            --cranberry: #c1352b;
+            --leaf: #6a8f4f;
+            --line: rgba(58, 43, 31, 0.12);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 100%);
+            background-attachment: fixed;
+            color: var(--ink);
+            min-height: 100vh;
+            padding: 2rem 1rem 4rem;
+        }
+
+        .wrap { max-width: 820px; margin: 0 auto; }
+
+        /* ---------- Hero ---------- */
+        .hero { text-align: center; color: #fff; margin-bottom: 1.6rem; }
+        .hero .eyebrow {
+            text-transform: uppercase; letter-spacing: 3px;
+            font-size: 0.8rem; font-weight: 600; opacity: 0.85;
+        }
+        .hero h1 {
+            font-size: 2.6rem; font-weight: 800; line-height: 1.05;
+            margin: 0.4rem 0 0.4rem; text-shadow: 0 3px 14px rgba(0,0,0,0.3);
+        }
+        .hero .sub { font-size: 1.05rem; font-weight: 300; opacity: 0.92; }
+        .hero .tick {
+            display: inline-block; margin-top: 0.7rem;
+            font-size: 0.9rem; font-weight: 600;
+            background: rgba(255,255,255,0.16);
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 0.3rem 0.8rem; border-radius: 999px;
+        }
+        .nav-links { margin-top: 1rem; display: flex; gap: 1.1rem; justify-content: center; flex-wrap: wrap; }
+        .nav-links a {
+            color: #fff; text-decoration: none; font-size: 0.9rem; opacity: 0.85;
+            border-bottom: 1px dashed rgba(255,255,255,0.5); padding-bottom: 1px;
+        }
+        .nav-links a:hover { opacity: 1; }
+
+        /* ---------- Week strip ---------- */
+        .strip {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 0.5rem;
+            margin-bottom: 1.8rem;
+        }
+        .chip {
+            background: rgba(255,255,255,0.92);
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 12px;
+            padding: 0.55rem 0.2rem;
+            text-align: center;
+            color: var(--ink);
+            cursor: pointer;
+            transition: transform 0.12s ease, background 0.12s ease;
+        }
+        .chip:hover { transform: translateY(-2px); background: #fff; }
+        .chip .dow { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); font-weight: 700; }
+        .chip .day { font-size: 1.4rem; font-weight: 800; line-height: 1.1; color: var(--ink); }
+        .chip .mon { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+        .chip .em { font-size: 1rem; margin-top: 0.15rem; }
+        .chip.feast { background: var(--amber); color: #4a2c00; border-color: var(--amber); }
+        .chip.feast .dow, .chip.feast .mon, .chip.feast .day { color: #4a2c00; }
+        .chip.today { outline: 3px solid var(--cranberry); outline-offset: 1px; }
+
+        /* ---------- Add-to-calendar ---------- */
+        .cta-row { display: flex; justify-content: center; margin-bottom: 2rem; }
+        .btn {
+            border: none; cursor: pointer; font-size: 1rem; font-weight: 700;
+            padding: 0.9rem 1.4rem; border-radius: 12px; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: var(--amber); color: #4a2c00;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 26px rgba(0,0,0,0.35); }
+
+        /* ---------- Timeline ---------- */
+        .timeline { position: relative; }
+        .day {
+            position: relative;
+            background: var(--cream);
+            border-radius: 18px;
+            padding: 1.2rem 1.3rem 1.2rem 1.3rem;
+            box-shadow: 0 14px 34px rgba(0,0,0,0.22);
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            scroll-margin-top: 1rem;
+        }
+        .day.feast { box-shadow: 0 0 0 3px var(--amber), 0 14px 34px rgba(0,0,0,0.28); }
+
+        .badge-icon {
+            flex-shrink: 0;
+            width: 56px; height: 56px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #fdeccd, #f8d9a8);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem;
+        }
+        .day.feast .badge-icon { background: linear-gradient(135deg, var(--amber), var(--pumpkin)); }
+
+        .day-body { flex: 1; min-width: 0; }
+        .day-date {
+            font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1.2px; color: var(--pumpkin);
+            display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
+        }
+        .day-title { font-size: 1.35rem; font-weight: 800; margin: 0.15rem 0 0.3rem; }
+        .day-blurb { font-size: 0.95rem; color: var(--muted); line-height: 1.4; }
+
+        .pill {
+            font-size: 0.66rem; font-weight: 800; letter-spacing: 0.5px;
+            padding: 0.12rem 0.5rem; border-radius: 999px; text-transform: uppercase;
+        }
+        .pill.feast { background: var(--amber); color: #4a2c00; }
+        .pill.today { background: var(--cranberry); color: #fff; }
+
+        .foot { text-align: center; color: rgba(255,255,255,0.8); font-size: 0.82rem; margin-top: 1.6rem; }
+
+        @media (max-width: 560px) {
+            .hero h1 { font-size: 2rem; }
+            .chip .day { font-size: 1.05rem; }
+            .chip .em { display: none; }
+            .strip { gap: 0.3rem; }
+            .day { padding: 1rem; gap: 0.8rem; }
+            .badge-icon { width: 46px; height: 46px; font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="hero">
+            <div class="eyebrow">Larson Thanksgiving · Philadelphia</div>
+            <h1>The Week in Philly</h1>
+            <div class="sub">Saturday, Nov 21 – Friday, Nov 27, 2026</div>
+            <div class="tick" id="tick"></div>
+            <div class="nav-links">
+                <a href="index.html">← the countdown</a>
+                <a href="potluck.html">🍽️ the potluck</a>
+            </div>
+        </div>
+
+        <div class="strip" id="strip"></div>
+
+        <div class="cta-row">
+            <button class="btn" id="calBtn">＋ Add the week to your calendar</button>
+        </div>
+
+        <div class="timeline" id="timeline"></div>
+
+        <div class="foot">Times TBD — this is the shape of the week. Yell if you want to add or move something.</div>
+    </div>
+
+    <script>
+        const DAYS = [
+            { date: '2026-11-21', dow: 'Saturday',  short: 'Sat', mon: 'Nov', dnum: '21', icon: '🛬',
+              title: 'Ben Arrives', blurb: 'The week kicks off — Ben is first to touch down in Philly.' },
+            { date: '2026-11-22', dow: 'Sunday',    short: 'Sun', mon: 'Nov', dnum: '22', icon: '🏃',
+              title: 'Nola Marathon & Dave Arrives', blurb: 'Marathon morning, and Dave rolls into town to complete the crew.' },
+            { date: '2026-11-23', dow: 'Monday',    short: 'Mon', mon: 'Nov', dnum: '23', icon: '🧀',
+              title: 'Cheese Steak Fest', blurb: 'A proper Philly cheesesteak crawl. Whiz vs. provolone — pick a side.' },
+            { date: '2026-11-24', dow: 'Tuesday',   short: 'Tue', mon: 'Nov', dnum: '24', icon: '💆',
+              title: 'Spa & Basketball', blurb: 'Relax and recharge at the spa, then hit the court for some hoops.' },
+            { date: '2026-11-25', dow: 'Wednesday', short: 'Wed', mon: 'Nov', dnum: '25', icon: '🥾',
+              title: 'Prep & Hike', blurb: 'Thanksgiving prep in the kitchen and a group hike to earn the feast.' },
+            { date: '2026-11-26', dow: 'Thursday',  short: 'Thu', mon: 'Nov', dnum: '26', icon: '🦃',
+              title: 'Fun Run & Food', blurb: 'Turkey-trot fun run in the morning, then the main event. Happy Thanksgiving!', feast: true },
+            { date: '2026-11-27', dow: 'Friday',    short: 'Fri', mon: 'Nov', dnum: '27', icon: '👋',
+              title: 'The Long Goodbye', blurb: 'Slow morning, long hugs, and safe travels home. Until next year.' }
+        ];
+
+        function todayISO() {
+            const n = new Date();
+            const p = x => String(x).padStart(2, '0');
+            return n.getFullYear() + '-' + p(n.getMonth() + 1) + '-' + p(n.getDate());
+        }
+        const TODAY = todayISO();
+
+        // ---------- Hero countdown line ----------
+        (function () {
+            const first = new Date(DAYS[0].date + 'T00:00:00');
+            const last = new Date(DAYS[DAYS.length - 1].date + 'T23:59:59');
+            const now = new Date();
+            const msDay = 1000 * 60 * 60 * 24;
+            const tick = document.getElementById('tick');
+            if (now < first) {
+                const days = Math.ceil((first - now) / msDay);
+                tick.textContent = '✈️ Ben lands in ' + days + ' day' + (days === 1 ? '' : 's');
+            } else if (now <= last) {
+                tick.textContent = '🎉 The crew is in town!';
+            } else {
+                tick.textContent = 'That’s a wrap on an epic week.';
+            }
+        })();
+
+        // ---------- Week strip ----------
+        const strip = document.getElementById('strip');
+        DAYS.forEach((d, i) => {
+            const chip = document.createElement('div');
+            chip.className = 'chip' + (d.feast ? ' feast' : '') + (d.date === TODAY ? ' today' : '');
+            chip.innerHTML = '<div class="dow">' + d.short + '</div>'
+                + '<div class="day">' + d.dnum + '</div>'
+                + '<div class="mon">' + d.mon + '</div>'
+                + '<div class="em">' + d.icon + '</div>';
+            chip.addEventListener('click', () => {
+                document.getElementById('day-' + i).scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+            strip.appendChild(chip);
+        });
+
+        // ---------- Timeline ----------
+        const timeline = document.getElementById('timeline');
+        DAYS.forEach((d, i) => {
+            const el = document.createElement('div');
+            el.className = 'day' + (d.feast ? ' feast' : '');
+            el.id = 'day-' + i;
+            let pills = '';
+            if (d.date === TODAY) pills += '<span class="pill today">Today</span>';
+            if (d.feast) pills += '<span class="pill feast">Feast Day</span>';
+            el.innerHTML = '<div class="badge-icon">' + d.icon + '</div>'
+                + '<div class="day-body">'
+                + '<div class="day-date">' + d.dow + ' · ' + d.mon + ' ' + d.dnum + ' ' + pills + '</div>'
+                + '<div class="day-title">' + d.title + '</div>'
+                + '<div class="day-blurb">' + d.blurb + '</div>'
+                + '</div>';
+            timeline.appendChild(el);
+        });
+
+        // ---------- Add the whole week to a calendar (.ics, all-day events) ----------
+        function icsDate(iso) { return iso.replace(/-/g, ''); }
+        function nextDay(iso) {
+            const dt = new Date(iso + 'T00:00:00');
+            dt.setDate(dt.getDate() + 1);
+            const p = x => String(x).padStart(2, '0');
+            return dt.getFullYear() + p(dt.getMonth() + 1) + p(dt.getDate());
+        }
+        function buildICS() {
+            const lines = [
+                'BEGIN:VCALENDAR', 'VERSION:2.0',
+                'PRODID:-//Larson Takedown//Thanksgiving Week//EN', 'CALSCALE:GREGORIAN'
+            ];
+            DAYS.forEach((d, i) => {
+                lines.push('BEGIN:VEVENT');
+                lines.push('UID:larson-week-' + icsDate(d.date) + '@dwlarson10.github.io');
+                lines.push('DTSTAMP:20260831T000000Z');
+                lines.push('DTSTART;VALUE=DATE:' + icsDate(d.date));
+                lines.push('DTEND;VALUE=DATE:' + nextDay(d.date));
+                lines.push('SUMMARY:' + d.title);
+                lines.push('DESCRIPTION:' + d.blurb.replace(/,/g, '\\,'));
+                lines.push('LOCATION:Philadelphia\\, PA');
+                lines.push('END:VEVENT');
+            });
+            lines.push('END:VCALENDAR');
+            return lines.join('\r\n');
+        }
+        document.getElementById('calBtn').addEventListener('click', function () {
+            const blob = new Blob([buildICS()], { type: 'text/calendar;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'larson-thanksgiving-week.ics';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+    </script>
+</body>
+</html>
