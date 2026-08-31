@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Larson Thanksgiving Potluck</title>
+    <style>
+        :root {
+            --bg1: #667eea;
+            --bg2: #764ba2;
+            --cream: #fff8ef;
+            --ink: #3a2b1f;
+            --muted: #8a7a6d;
+            --amber: #f2b705;
+            --pumpkin: #e07a3f;
+            --cranberry: #c1352b;
+            --leaf: #6a8f4f;
+            --line: rgba(58, 43, 31, 0.12);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 100%);
+            background-attachment: fixed;
+            color: var(--ink);
+            min-height: 100vh;
+            padding: 2rem 1rem 4rem;
+        }
+
+        .wrap { max-width: 940px; margin: 0 auto; }
+
+        /* ---------- Header ---------- */
+        .hero {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 2rem;
+        }
+
+        .hero .eyebrow {
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            opacity: 0.85;
+        }
+
+        .hero h1 {
+            font-size: 2.6rem;
+            font-weight: 800;
+            line-height: 1.05;
+            margin: 0.4rem 0 0.5rem;
+            text-shadow: 0 3px 14px rgba(0,0,0,0.3);
+        }
+
+        .hero .sub { font-size: 1.05rem; font-weight: 300; opacity: 0.92; }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 1rem;
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            opacity: 0.85;
+            border-bottom: 1px dashed rgba(255,255,255,0.5);
+            padding-bottom: 1px;
+        }
+        .back-link:hover { opacity: 1; }
+
+        /* ---------- The "table fullness" meter ---------- */
+        .meter-card {
+            background: var(--cream);
+            border-radius: 20px;
+            padding: 1.4rem 1.6rem;
+            box-shadow: 0 18px 45px rgba(0,0,0,0.28);
+            margin-bottom: 1.5rem;
+        }
+
+        .meter-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .meter-title { font-weight: 700; font-size: 1.1rem; }
+        .meter-title .plate { font-size: 1.2rem; }
+
+        .stats { display: flex; gap: 1.4rem; }
+        .stat { text-align: center; }
+        .stat b { display: block; font-size: 1.35rem; font-weight: 800; line-height: 1; }
+        .stat span { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+
+        .bar {
+            height: 16px;
+            border-radius: 999px;
+            background: #eadfce;
+            overflow: hidden;
+            position: relative;
+        }
+        .bar-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, var(--amber), var(--pumpkin) 60%, var(--cranberry));
+            transition: width 1s cubic-bezier(.2,.8,.2,1);
+        }
+        .bar-caption { margin-top: 0.55rem; font-size: 0.85rem; color: var(--muted); }
+
+        /* ---------- Add CTA ---------- */
+        .cta-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 2rem; }
+        .btn {
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 700;
+            padding: 0.95rem 1.4rem;
+            border-radius: 12px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+        }
+        .btn-primary {
+            background: var(--amber);
+            color: #4a2c00;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+            flex: 1;
+            justify-content: center;
+            min-width: 220px;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 26px rgba(0,0,0,0.35); }
+        .btn-ghost {
+            background: rgba(255,255,255,0.16);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.35);
+        }
+        .btn-ghost:hover { background: rgba(255,255,255,0.26); }
+
+        /* ---------- Category sections ---------- */
+        .section {
+            background: var(--cream);
+            border-radius: 20px;
+            padding: 1.3rem 1.4rem 1.5rem;
+            box-shadow: 0 14px 36px rgba(0,0,0,0.22);
+            margin-bottom: 1.3rem;
+        }
+        .section-head {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 2px solid var(--line);
+        }
+        .section-icon { font-size: 1.7rem; }
+        .section-title { font-size: 1.3rem; font-weight: 800; flex: 1; }
+        .section-count {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--muted);
+            background: #efe5d5;
+            padding: 0.25rem 0.6rem;
+            border-radius: 999px;
+        }
+
+        .dishes { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 0.7rem; }
+
+        .dish {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.7rem 0.8rem;
+            border-radius: 12px;
+            background: #fffdf9;
+            border: 1px solid var(--line);
+        }
+        .dish.open {
+            background: repeating-linear-gradient(45deg, #fbf3e6, #fbf3e6 10px, #f7ecdb 10px, #f7ecdb 20px);
+            border: 1px dashed var(--pumpkin);
+        }
+
+        .avatar {
+            width: 38px; height: 38px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-weight: 800; font-size: 0.95rem;
+            box-shadow: inset 0 0 0 2px rgba(255,255,255,0.35);
+        }
+        .avatar.empty {
+            background: transparent;
+            color: var(--pumpkin);
+            box-shadow: inset 0 0 0 2px var(--pumpkin);
+            font-size: 1.2rem;
+        }
+
+        .dish-body { min-width: 0; }
+        .dish-name { font-weight: 700; font-size: 0.98rem; line-height: 1.2; }
+        .dish-by { font-size: 0.82rem; color: var(--muted); }
+        .dish-by.open-label { color: var(--pumpkin); font-weight: 700; }
+        .dish-note {
+            display: inline-block;
+            margin-top: 0.25rem;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--leaf);
+            background: #eef4e6;
+            padding: 0.1rem 0.45rem;
+            border-radius: 999px;
+        }
+
+        /* ---------- States ---------- */
+        .banner {
+            background: rgba(255,255,255,0.16);
+            border: 1px solid rgba(255,255,255,0.35);
+            color: #fff;
+            border-radius: 12px;
+            padding: 0.8rem 1rem;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .banner code { background: rgba(0,0,0,0.25); padding: 0.05rem 0.35rem; border-radius: 5px; }
+
+        .foot {
+            text-align: center;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.82rem;
+            margin-top: 1.5rem;
+        }
+        .refresh-btn {
+            background: none; border: none; color: #fff; cursor: pointer;
+            text-decoration: underline; font-size: 0.82rem; opacity: 0.85;
+        }
+        .refresh-btn:hover { opacity: 1; }
+
+        .spinner {
+            width: 30px; height: 30px; margin: 3rem auto;
+            border: 3px solid rgba(255,255,255,0.35);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 2rem; }
+            .meter-top { flex-direction: column; }
+            .stats { width: 100%; justify-content: space-between; }
+            .dishes { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="hero">
+            <div class="eyebrow">Larson Thanksgiving · Philadelphia</div>
+            <h1>What's on the Table 🍽️</h1>
+            <div class="sub">Thursday, November 26 · dinner at 3:00 PM</div>
+            <a class="back-link" href="index.html">← back to the countdown</a>
+        </div>
+
+        <div id="app">
+            <div class="spinner"></div>
+        </div>
+
+        <div class="foot">
+            <span id="updated"></span>
+            <button class="refresh-btn" id="refreshBtn" style="display:none;">refresh</button>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  CONFIG — paste your Google Sheet details here.
+        //  1. Make a sheet with columns:  Dish | Category | Brought by | Notes
+        //  2. Share → "Anyone with the link: Viewer"  (read-only is fine)
+        //  3. Copy the SHEET ID from the URL:
+        //     docs.google.com/spreadsheets/d/<THIS PART>/edit
+        //  4. Paste it below. Set EDIT_URL to the sheet (or a Google Form)
+        //     so family can add their dish.
+        //  Until SHEET_ID is filled in, the page shows sample data.
+        // ============================================================
+        const CONFIG = {
+            SHEET_ID: '',
+            SHEET_NAME: 'Potluck',
+            EDIT_URL: ''
+        };
+
+        // Category display order + icons. Unknown categories still show,
+        // appended at the end with a default icon.
+        const CATEGORY_META = [
+            { key: 'turkey & mains', label: 'Turkey & Mains', icon: '🦃' },
+            { key: 'appetizers',     label: 'Appetizers',     icon: '🧀' },
+            { key: 'sides',          label: 'Sides',          icon: '🥔' },
+            { key: 'desserts',       label: 'Desserts',       icon: '🥧' },
+            { key: 'drinks',         label: 'Drinks',         icon: '🍷' },
+            { key: 'other',          label: 'Other',          icon: '✨' }
+        ];
+
+        const SAMPLE = [
+            { dish: 'Roast Turkey',        category: 'Turkey & Mains', by: 'Dan',     note: 'the host bird' },
+            { dish: 'Honey-Glazed Ham',    category: 'Turkey & Mains', by: '',        note: '' },
+            { dish: 'Cheese & Charcuterie',category: 'Appetizers',     by: 'Aunt Sue',note: '' },
+            { dish: 'Deviled Eggs',        category: 'Appetizers',     by: '',        note: '' },
+            { dish: 'Mashed Potatoes',     category: 'Sides',          by: 'Sarah',   note: '' },
+            { dish: 'Green Bean Casserole',category: 'Sides',          by: '',        note: 'vegetarian' },
+            { dish: 'Classic Stuffing',    category: 'Sides',          by: 'Mike',    note: '' },
+            { dish: 'Mac & Cheese',        category: 'Sides',          by: 'Emma',    note: 'kids approved' },
+            { dish: 'Dinner Rolls',        category: 'Sides',          by: '',        note: '' },
+            { dish: 'Pumpkin Pie',         category: 'Desserts',       by: 'Grandma', note: '' },
+            { dish: 'Apple Pie',           category: 'Desserts',       by: '',        note: '' },
+            { dish: 'Pecan Pie',           category: 'Desserts',       by: 'Jess',    note: 'gluten-free' },
+            { dish: 'Sparkling Cider',     category: 'Drinks',         by: 'Tom',     note: '' },
+            { dish: 'Wine',                category: 'Drinks',         by: '',        note: '' }
+        ];
+
+        // ---------- Google Sheet fetch (CSV via gviz, no API key) ----------
+        function sheetUrl() {
+            const base = 'https://docs.google.com/spreadsheets/d/' + CONFIG.SHEET_ID + '/gviz/tq';
+            const params = 'tqx=out:csv&sheet=' + encodeURIComponent(CONFIG.SHEET_NAME) + '&t=' + Date.now();
+            return base + '?' + params;
+        }
+
+        // Minimal RFC-4180-ish CSV parser (handles quotes, commas, newlines).
+        function parseCSV(text) {
+            const rows = [];
+            let row = [], field = '', inQuotes = false;
+            for (let i = 0; i < text.length; i++) {
+                const c = text[i];
+                if (inQuotes) {
+                    if (c === '"') {
+                        if (text[i + 1] === '"') { field += '"'; i++; }
+                        else inQuotes = false;
+                    } else field += c;
+                } else {
+                    if (c === '"') inQuotes = true;
+                    else if (c === ',') { row.push(field); field = ''; }
+                    else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+                    else if (c === '\r') { /* ignore */ }
+                    else field += c;
+                }
+            }
+            if (field.length || row.length) { row.push(field); rows.push(row); }
+            return rows;
+        }
+
+        function rowsToDishes(rows) {
+            if (!rows.length) return [];
+            const headers = rows[0].map(h => h.trim().toLowerCase());
+            const idx = (names) => {
+                for (const n of names) { const i = headers.indexOf(n); if (i !== -1) return i; }
+                return -1;
+            };
+            const di = idx(['dish', 'item', 'food']);
+            const ci = idx(['category', 'type']);
+            const bi = idx(['brought by', 'name', 'who', 'person', 'brought']);
+            const ni = idx(['notes', 'note', 'dietary']);
+            const out = [];
+            for (let r = 1; r < rows.length; r++) {
+                const cells = rows[r];
+                const dish = ((di > -1 && cells[di]) ? cells[di] : '').trim();
+                if (!dish) continue;
+                out.push({
+                    dish: dish,
+                    category: (ci > -1 && cells[ci] ? cells[ci] : 'Other').trim() || 'Other',
+                    by: (bi > -1 && cells[bi] ? cells[bi] : '').trim(),
+                    note: (ni > -1 && cells[ni] ? cells[ni] : '').trim()
+                });
+            }
+            return out;
+        }
+
+        // ---------- Rendering ----------
+        function initials(name) {
+            const parts = name.trim().split(/\s+/);
+            if (parts.length === 1) return parts[0].slice(0, 1).toUpperCase();
+            return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+        }
+        function hueFor(name) {
+            let h = 0;
+            for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 360;
+            return h;
+        }
+        function esc(s) {
+            return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        }
+
+        function groupByCategory(dishes) {
+            const map = new Map();
+            for (const d of dishes) {
+                const key = d.category.trim().toLowerCase();
+                if (!map.has(key)) map.set(key, { label: d.category.trim(), items: [] });
+                map.get(key).items.push(d);
+            }
+            const ordered = [];
+            for (const meta of CATEGORY_META) {
+                if (map.has(meta.key)) { ordered.push({ ...meta, items: map.get(meta.key).items }); map.delete(meta.key); }
+            }
+            for (const [key, val] of map) {
+                ordered.push({ key, label: val.label, icon: '🍽️', items: val.items });
+            }
+            return ordered;
+        }
+
+        function render(dishes, isSample) {
+            const app = document.getElementById('app');
+            const total = dishes.length;
+            const claimed = dishes.filter(d => d.by).length;
+            const open = total - claimed;
+            const chefs = new Set(dishes.filter(d => d.by).map(d => d.by.toLowerCase())).size;
+            const pct = total ? Math.round((claimed / total) * 100) : 0;
+
+            let html = '';
+
+            if (isSample) {
+                html += '<div class="banner">✨ Showing <b>sample dishes</b> — connect your Google Sheet in <code>potluck.html</code> to go live.</div>';
+            }
+
+            // Meter + stats
+            html += '<div class="meter-card">'
+                + '<div class="meter-top">'
+                + '<div class="meter-title"><span class="plate">🍽️</span> The table is ' + pct + '% full</div>'
+                + '<div class="stats">'
+                + '<div class="stat"><b>' + total + '</b><span>dishes</span></div>'
+                + '<div class="stat"><b>' + chefs + '</b><span>chefs</span></div>'
+                + '<div class="stat" style="color:var(--pumpkin)"><b>' + open + '</b><span>open slots</span></div>'
+                + '</div></div>'
+                + '<div class="bar"><div class="bar-fill" id="barFill"></div></div>'
+                + '<div class="bar-caption">' + (open > 0
+                    ? open + ' dish' + (open === 1 ? '' : 'es') + ' still ' + (open === 1 ? 'needs' : 'need') + ' a chef — grab one below!'
+                    : 'Every dish has a chef. We are going to eat well. 🦃') + '</div>'
+                + '</div>';
+
+            // CTA
+            const addHref = CONFIG.EDIT_URL || '#';
+            const addAttrs = CONFIG.EDIT_URL ? ' target="_blank" rel="noopener"' : ' onclick="alert(\'Set EDIT_URL in potluck.html to the Google Sheet or a sign-up form.\');return false;"';
+            html += '<div class="cta-row">'
+                + '<a class="btn btn-primary" href="' + esc(addHref) + '"' + addAttrs + '>＋ Add or claim a dish</a>'
+                + '</div>';
+
+            // Sections
+            for (const group of groupByCategory(dishes)) {
+                html += '<div class="section">'
+                    + '<div class="section-head">'
+                    + '<span class="section-icon">' + group.icon + '</span>'
+                    + '<span class="section-title">' + esc(group.label) + '</span>'
+                    + '<span class="section-count">' + group.items.length + '</span>'
+                    + '</div><div class="dishes">';
+                // claimed first, then open slots
+                const items = group.items.slice().sort((a, b) => (a.by ? 0 : 1) - (b.by ? 0 : 1));
+                for (const d of items) {
+                    if (d.by) {
+                        html += '<div class="dish">'
+                            + '<div class="avatar" style="background:hsl(' + hueFor(d.by) + ',55%,45%)">' + esc(initials(d.by)) + '</div>'
+                            + '<div class="dish-body">'
+                            + '<div class="dish-name">' + esc(d.dish) + '</div>'
+                            + '<div class="dish-by">' + esc(d.by) + '</div>'
+                            + (d.note ? '<span class="dish-note">' + esc(d.note) + '</span>' : '')
+                            + '</div></div>';
+                    } else {
+                        html += '<div class="dish open">'
+                            + '<div class="avatar empty">＋</div>'
+                            + '<div class="dish-body">'
+                            + '<div class="dish-name">' + esc(d.dish) + '</div>'
+                            + '<div class="dish-by open-label">up for grabs</div>'
+                            + (d.note ? '<span class="dish-note">' + esc(d.note) + '</span>' : '')
+                            + '</div></div>';
+                    }
+                }
+                html += '</div></div>';
+            }
+
+            app.innerHTML = html;
+            requestAnimationFrame(() => {
+                const bar = document.getElementById('barFill');
+                if (bar) bar.style.width = pct + '%';
+            });
+
+            const now = new Date();
+            document.getElementById('updated').textContent = 'Updated ' + now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) + ' · ';
+            document.getElementById('refreshBtn').style.display = 'inline';
+        }
+
+        async function load() {
+            if (!CONFIG.SHEET_ID) { render(SAMPLE, true); return; }
+            try {
+                const res = await fetch(sheetUrl(), { cache: 'no-store' });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const dishes = rowsToDishes(parseCSV(await res.text()));
+                if (!dishes.length) { render(SAMPLE, true); return; }
+                render(dishes, false);
+            } catch (e) {
+                const app = document.getElementById('app');
+                app.innerHTML = '<div class="banner">⚠️ Couldn\'t reach the Google Sheet. Make sure it\'s shared as '
+                    + '<b>“Anyone with the link: Viewer.”</b> Showing sample dishes for now.</div>';
+                render(SAMPLE, true);
+            }
+        }
+
+        document.getElementById('refreshBtn').addEventListener('click', load);
+        load();
+        // Auto-refresh so the board feels live as family updates the sheet.
+        setInterval(load, 45000);
+    </script>
+</body>
+</html>
