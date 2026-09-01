@@ -128,6 +128,15 @@
         }
         .day-title { font-size: 1.35rem; font-weight: 800; margin: 0.15rem 0 0.3rem; }
         .day-blurb { font-size: 0.95rem; color: var(--muted); line-height: 1.4; }
+        .day-link {
+            display: inline-flex; align-items: center; gap: 0.35rem;
+            margin-top: 0.7rem;
+            font-size: 0.85rem; font-weight: 800; text-decoration: none;
+            color: #4a2c00; background: var(--amber);
+            padding: 0.45rem 0.8rem; border-radius: 10px;
+            transition: transform 0.12s ease, box-shadow 0.12s ease;
+        }
+        .day-link:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0,0,0,0.2); }
 
         .pill {
             font-size: 0.66rem; font-weight: 800; letter-spacing: 0.5px;
@@ -175,19 +184,21 @@
     <script>
         const DAYS = [
             { date: '2026-11-21', dow: 'Saturday',  short: 'Sat', mon: 'Nov', dnum: '21', icon: '🛬',
-              title: 'Ben Arrives', blurb: 'The week kicks off — Ben is first to touch down in Philly.' },
+              title: 'Ben, Sarah & King James Arrive', blurb: 'Ben\'s crew — Ben, Sarah, and “King” James — touch down earlier in the day. Just our two families, so we keep it low-key: hang in, get settled, and start getting ready for the week ahead.' },
             { date: '2026-11-22', dow: 'Sunday',    short: 'Sun', mon: 'Nov', dnum: '22', icon: '🏃',
-              title: 'Nola Marathon & Dave Arrives', blurb: 'Marathon morning, and Dave rolls into town to complete the crew.' },
-            { date: '2026-11-23', dow: 'Monday',    short: 'Mon', mon: 'Nov', dnum: '23', icon: '🧀',
-              title: 'Cheese Steak Fest', blurb: 'A proper Philly cheesesteak crawl. Whiz vs. provolone — pick a side.' },
-            { date: '2026-11-24', dow: 'Tuesday',   short: 'Tue', mon: 'Nov', dnum: '24', icon: '💆',
-              title: 'Spa & Basketball', blurb: 'Relax and recharge at the spa, then hit the court for some hoops.' },
+              title: 'Nola\'s Marathon & Dave Arrives', blurb: 'Nola\'s up early to run the Philadelphia Marathon — we might all head out to cheer her on along the course. Later, Dave rolls into town and the crew is complete.' },
+            { date: '2026-11-23', dow: 'Monday',    short: 'Mon', mon: 'Nov', dnum: '23', icon: '🏀',
+              title: 'Spa Day & Sixers Game', blurb: 'A choose-your-own kind of day: the ladies head to the spa to relax and recharge, while the gentlemen take in Sixers vs. the Portland Trail Blazers. Regroup after and trade the day\'s best stories.' },
+            { date: '2026-11-24', dow: 'Tuesday',   short: 'Tue', mon: 'Nov', dnum: '24', icon: '🧀',
+              title: 'Cheese Steak Fest', blurb: 'A proper Philly cheesesteak crawl through four classics. Whiz vs. provolone — pick a side.',
+              link: { href: 'cheesesteak.html', label: '🗺️ See the crawl map' } },
             { date: '2026-11-25', dow: 'Wednesday', short: 'Wed', mon: 'Nov', dnum: '25', icon: '🥾',
-              title: 'Prep & Hike', blurb: 'Thanksgiving prep in the kitchen and a group hike to earn the feast.' },
+              title: 'Prep & a Wissahickon Hike', blurb: 'Roll up the sleeves for some Thanksgiving prep, then lace up for a hike in the Wissahickon — a perfect warm-up for Thursday morning\'s turkey trot.' },
             { date: '2026-11-26', dow: 'Thursday',  short: 'Thu', mon: 'Nov', dnum: '26', icon: '🦃',
-              title: 'Fun Run & Food', blurb: 'Turkey-trot fun run in the morning, then the main event. Happy Thanksgiving!', feast: true },
+              title: 'Fun Run & Food', blurb: 'Kick off the big day with the Face to Face Turkey Trot on Forbidden Drive in the Wissahickon — 9:00 AM start, with a 5-mile run and a 1-mile fun run/walk, all benefiting a Germantown nonprofit. Then home to host the main event. Happy Thanksgiving!', feast: true,
+              link: { href: 'https://runsignup.com/Race/PA/Philadelphia/FacetoFaceTurkeyTrot', label: '🦃 Turkey Trot details & sign-up' } },
             { date: '2026-11-27', dow: 'Friday',    short: 'Fri', mon: 'Nov', dnum: '27', icon: '👋',
-              title: 'The Long Goodbye', blurb: 'Slow morning, long hugs, and safe travels home. Until next year.' }
+              title: 'The Long Goodbye', blurb: 'No agenda today — just the long week winding down. Flights out, slow goodbyes, and as much time together as we can squeeze in before everyone heads home. Until next year.' }
         ];
 
         function todayISO() {
@@ -238,11 +249,16 @@
             let pills = '';
             if (d.date === TODAY) pills += '<span class="pill today">Today</span>';
             if (d.feast) pills += '<span class="pill feast">Feast Day</span>';
+            const linkExtra = d.link && /^https?:/.test(d.link.href) ? ' target="_blank" rel="noopener"' : '';
+            const linkHtml = d.link
+                ? '<a class="day-link" href="' + d.link.href + '"' + linkExtra + '>' + d.link.label + '</a>'
+                : '';
             el.innerHTML = '<div class="badge-icon">' + d.icon + '</div>'
                 + '<div class="day-body">'
                 + '<div class="day-date">' + d.dow + ' · ' + d.mon + ' ' + d.dnum + ' ' + pills + '</div>'
                 + '<div class="day-title">' + d.title + '</div>'
                 + '<div class="day-blurb">' + d.blurb + '</div>'
+                + linkHtml
                 + '</div>';
             timeline.appendChild(el);
         });
