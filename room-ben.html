@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ben &amp; Family's Room</title>
+    <style>
+        :root {
+            --bg1: #667eea; --bg2: #764ba2;
+            --cream: #fff8ef; --ink: #3a2b1f; --muted: #8a7a6d;
+            --amber: #f2b705; --pumpkin: #e07a3f; --cranberry: #c1352b; --leaf: #6a8f4f;
+            --line: rgba(58, 43, 31, 0.12);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 100%);
+            background-attachment: fixed; color: var(--ink); min-height: 100vh;
+            padding: 2rem 1rem 4rem;
+        }
+        .wrap { max-width: 820px; margin: 0 auto; }
+
+        .hero { text-align: center; color: #fff; margin-bottom: 1.5rem; }
+        .hero .eyebrow { text-transform: uppercase; letter-spacing: 3px; font-size: 0.8rem; font-weight: 600; opacity: 0.85; }
+        .hero h1 { font-size: 2.6rem; font-weight: 800; line-height: 1.05; margin: 0.4rem 0; text-shadow: 0 3px 14px rgba(0,0,0,0.3); }
+        .hero .who { font-size: 1.1rem; font-weight: 300; opacity: 0.95; }
+        .nav-links { margin-top: 1rem; display: flex; gap: 1.1rem; justify-content: center; flex-wrap: wrap; }
+        .nav-links a { color: #fff; text-decoration: none; font-size: 0.9rem; opacity: 0.85; border-bottom: 1px dashed rgba(255,255,255,0.5); padding-bottom: 1px; }
+        .nav-links a:hover { opacity: 1; }
+
+        .card {
+            background: var(--cream); border-radius: 20px; padding: 1.3rem 1.4rem;
+            box-shadow: 0 14px 36px rgba(0,0,0,0.22); margin-bottom: 1.2rem;
+        }
+        .card h2 {
+            font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.5px;
+            color: var(--pumpkin); margin-bottom: 0.9rem;
+        }
+
+        /* Gallery */
+        .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.6rem; }
+        .gallery img {
+            width: 100%; aspect-ratio: 4 / 3; object-fit: cover;
+            border-radius: 12px; cursor: pointer; background: #efe5d5;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15); transition: transform 0.15s ease;
+        }
+        .gallery img:hover { transform: scale(1.03); }
+        .empty-photos {
+            text-align: center; padding: 2.2rem 1rem; color: var(--muted);
+            border: 2px dashed var(--line); border-radius: 14px; font-size: 0.95rem;
+        }
+        .empty-photos .big { font-size: 2rem; display: block; margin-bottom: 0.4rem; }
+
+        /* Facts */
+        .facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.8rem; }
+        .fact { display: flex; gap: 0.7rem; align-items: flex-start; }
+        .fact .ic { font-size: 1.4rem; flex-shrink: 0; width: 1.9rem; text-align: center; }
+        .fact .lbl { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); font-weight: 700; }
+        .fact .val { font-size: 1rem; font-weight: 600; }
+        .coming-soon { color: var(--muted); font-size: 0.95rem; }
+
+        .notes li { margin: 0 0 0.5rem 1.1rem; font-size: 0.96rem; line-height: 1.4; }
+
+        /* Lightbox */
+        .lightbox {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+            display: none; align-items: center; justify-content: center; z-index: 100; padding: 1.5rem;
+        }
+        .lightbox.open { display: flex; }
+        .lightbox img { max-width: 100%; max-height: 100%; border-radius: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+        .lightbox .close { position: absolute; top: 1rem; right: 1.3rem; color: #fff; font-size: 2.2rem; cursor: pointer; line-height: 1; }
+
+        @media (max-width: 560px) { .hero h1 { font-size: 2rem; } }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="hero">
+            <div class="eyebrow">Larson Thanksgiving · Where You're Staying</div>
+            <h1 id="roomName">Ben &amp; Family's Room</h1>
+            <div class="who" id="roomWho">Ben, Sarah &amp; “King” James</div>
+            <div class="nav-links">
+                <a href="rooms.html">← all rooms</a>
+                <a href="week.html">the week</a>
+                <a href="index.html">the countdown</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>The Room</h2>
+            <div id="photos"></div>
+        </div>
+
+        <div class="card">
+            <h2>Good to Know</h2>
+            <div id="facts"></div>
+        </div>
+
+        <div class="card" id="notesCard" hidden>
+            <h2>Notes</h2>
+            <ul class="notes" id="notes"></ul>
+        </div>
+    </div>
+
+    <div class="lightbox" id="lightbox">
+        <span class="close" id="lbClose">&times;</span>
+        <img id="lbImg" alt="Room photo" />
+    </div>
+
+    <script>
+        // ============================================================
+        //  Fill this in for the room. Photos: drop images named
+        //  1.jpg, 2.jpg, 3.jpg … into  images/rooms/ben/
+        //  and they show up automatically (discovery stops at the first gap).
+        // ============================================================
+        const ROOM = {
+            folder: 'images/rooms/ben/',
+            // facts: add {ic, lbl, val} items, e.g.
+            //   { ic: '🛏️', lbl: 'Beds', val: '1 queen + 1 twin' },
+            //   { ic: '🚿', lbl: 'Bathroom', val: 'Shared, down the hall' },
+            //   { ic: '📶', lbl: 'Wi-Fi', val: 'LarsonGuest / turkey2026' },
+            facts: [],
+            // notes: add short strings, e.g. 'Towels are in the closet.'
+            notes: []
+        };
+
+        // ---------- Photo gallery (auto-discovered) ----------
+        function probe(src) {
+            return new Promise(res => { const i = new Image(); i.onload = () => res(true); i.onerror = () => res(false); i.src = src; });
+        }
+        async function discover(folder) {
+            const found = [];
+            for (let n = 1; n <= 100; n++) {
+                const src = folder + n + '.jpg';
+                if (await probe(src)) found.push(src); else break;
+            }
+            return found;
+        }
+        function renderPhotos(srcs) {
+            const el = document.getElementById('photos');
+            if (!srcs.length) {
+                el.innerHTML = '<div class="empty-photos"><span class="big">📷</span>Photos coming soon.</div>';
+                return;
+            }
+            const grid = document.createElement('div');
+            grid.className = 'gallery';
+            srcs.forEach(src => {
+                const img = document.createElement('img');
+                img.src = src; img.alt = 'Room photo';
+                img.addEventListener('click', () => openLightbox(src));
+                grid.appendChild(img);
+            });
+            el.innerHTML = '';
+            el.appendChild(grid);
+        }
+
+        // ---------- Facts ----------
+        function renderFacts() {
+            const el = document.getElementById('facts');
+            if (!ROOM.facts.length) {
+                el.innerHTML = '<div class="coming-soon">Room details coming soon.</div>';
+                return;
+            }
+            const grid = document.createElement('div');
+            grid.className = 'facts';
+            ROOM.facts.forEach(f => {
+                const d = document.createElement('div');
+                d.className = 'fact';
+                d.innerHTML = '<div class="ic">' + f.ic + '</div><div><div class="lbl">' + f.lbl + '</div><div class="val">' + f.val + '</div></div>';
+                grid.appendChild(d);
+            });
+            el.appendChild(grid);
+        }
+
+        // ---------- Notes ----------
+        function renderNotes() {
+            if (!ROOM.notes.length) return;
+            document.getElementById('notesCard').hidden = false;
+            const ul = document.getElementById('notes');
+            ROOM.notes.forEach(n => { const li = document.createElement('li'); li.textContent = n; ul.appendChild(li); });
+        }
+
+        // ---------- Lightbox ----------
+        const lb = document.getElementById('lightbox');
+        function openLightbox(src) { document.getElementById('lbImg').src = src; lb.classList.add('open'); }
+        function closeLightbox() { lb.classList.remove('open'); }
+        document.getElementById('lbClose').addEventListener('click', closeLightbox);
+        lb.addEventListener('click', e => { if (e.target === lb) closeLightbox(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+        renderFacts();
+        renderNotes();
+        discover(ROOM.folder).then(renderPhotos);
+    </script>
+</body>
+</html>
