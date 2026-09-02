@@ -75,11 +75,11 @@
         }
         .chip:hover { transform: translateY(-2px); background: #fff; }
         .chip .dow { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); font-weight: 700; }
-        .chip .day { font-size: 1.4rem; font-weight: 800; line-height: 1.1; color: var(--ink); }
+        .chip .cnum { font-size: 1.4rem; font-weight: 800; line-height: 1.1; color: var(--ink); }
         .chip .mon { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
         .chip .em { font-size: 1rem; margin-top: 0.15rem; }
         .chip.feast { background: var(--amber); color: #4a2c00; border-color: var(--amber); }
-        .chip.feast .dow, .chip.feast .mon, .chip.feast .day { color: #4a2c00; }
+        .chip.feast .dow, .chip.feast .mon, .chip.feast .cnum { color: #4a2c00; }
         .chip.today { outline: 3px solid var(--cranberry); outline-offset: 1px; }
 
         /* ---------- Add-to-calendar ---------- */
@@ -149,7 +149,7 @@
 
         @media (max-width: 560px) {
             .hero h1 { font-size: 2rem; }
-            .chip .day { font-size: 1.05rem; }
+            .chip .cnum { font-size: 1.05rem; }
             .chip .em { display: none; }
             .strip { gap: 0.3rem; }
             .day { padding: 1rem; gap: 0.8rem; }
@@ -162,7 +162,7 @@
         <div class="hero">
             <div class="eyebrow">Larson Thanksgiving · Philadelphia</div>
             <h1>The Week in Philly</h1>
-            <div class="sub">Saturday, Nov 21 – Friday, Nov 27, 2026</div>
+            <div class="sub">Saturday, Nov 21 – Saturday, Nov 28, 2026</div>
             <div class="tick" id="tick"></div>
             <div class="nav-links">
                 <a href="index.html">← the countdown</a>
@@ -197,7 +197,10 @@
             { date: '2026-11-26', dow: 'Thursday',  short: 'Thu', mon: 'Nov', dnum: '26', icon: '🦃',
               title: 'Fun Run & Food', blurb: 'Kick off the big day with the Face to Face Turkey Trot on Forbidden Drive in the Wissahickon — 9:00 AM start, with a 5-mile run and a 1-mile fun run/walk, all benefiting a Germantown nonprofit. Then home to host the main event. Happy Thanksgiving!', feast: true,
               link: { href: 'https://runsignup.com/Race/PA/Philadelphia/FacetoFaceTurkeyTrot', label: '🦃 Turkey Trot details & sign-up' } },
-            { date: '2026-11-27', dow: 'Friday',    short: 'Fri', mon: 'Nov', dnum: '27', icon: '👋',
+            { date: '2026-11-27', dow: 'Friday',    short: 'Fri', mon: 'Nov', dnum: '27', icon: '🎉',
+              title: 'Princeton Party', blurb: 'A day trip across the river to Princeton / West Windsor, NJ to see the Schemick family. Loads of options for our crew — a whimsical sculpture park, a stroll through downtown Princeton, trampolines, ice skating, and the Palmer Square tree lighting to cap the night.',
+              link: { href: 'princeton.html', label: '🎨 Plan the Princeton day' } },
+            { date: '2026-11-28', dow: 'Saturday',  short: 'Sat', mon: 'Nov', dnum: '28', icon: '👋',
               title: 'The Long Goodbye', blurb: 'No agenda today — just the long week winding down. Flights out, slow goodbyes, and as much time together as we can squeeze in before everyone heads home. Until next year.' }
         ];
 
@@ -227,11 +230,13 @@
 
         // ---------- Week strip ----------
         const strip = document.getElementById('strip');
+        // Adapt the column count to however many days the week holds.
+        strip.style.gridTemplateColumns = 'repeat(' + DAYS.length + ', minmax(0, 1fr))';
         DAYS.forEach((d, i) => {
             const chip = document.createElement('div');
             chip.className = 'chip' + (d.feast ? ' feast' : '') + (d.date === TODAY ? ' today' : '');
             chip.innerHTML = '<div class="dow">' + d.short + '</div>'
-                + '<div class="day">' + d.dnum + '</div>'
+                + '<div class="cnum">' + d.dnum + '</div>'
                 + '<div class="mon">' + d.mon + '</div>'
                 + '<div class="em">' + d.icon + '</div>';
             chip.addEventListener('click', () => {

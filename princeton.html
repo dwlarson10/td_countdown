@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Princeton Party</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <style>
+        :root {
+            --bg1: #667eea; --bg2: #764ba2;
+            --cream: #fff8ef; --ink: #3a2b1f; --muted: #8a7a6d;
+            --amber: #f2b705; --pumpkin: #e07a3f; --cranberry: #c1352b; --leaf: #6a8f4f;
+            --line: rgba(58, 43, 31, 0.12);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 100%);
+            background-attachment: fixed; color: var(--ink); min-height: 100vh;
+            padding: 2rem 1rem 4rem;
+        }
+        .wrap { max-width: 900px; margin: 0 auto; }
+
+        .hero { text-align: center; color: #fff; margin-bottom: 1.4rem; }
+        .hero .eyebrow { text-transform: uppercase; letter-spacing: 3px; font-size: 0.8rem; font-weight: 600; opacity: 0.85; }
+        .hero h1 { font-size: 2.6rem; font-weight: 800; line-height: 1.05; margin: 0.4rem 0; text-shadow: 0 3px 14px rgba(0,0,0,0.3); }
+        .hero .sub { font-size: 1.05rem; font-weight: 300; opacity: 0.92; }
+        .hero .crew {
+            display: inline-block; margin-top: 0.7rem; font-size: 0.9rem; font-weight: 600;
+            background: rgba(255,255,255,0.16); border: 1px solid rgba(255,255,255,0.3);
+            padding: 0.3rem 0.8rem; border-radius: 999px;
+        }
+        .nav-links { margin-top: 1rem; display: flex; gap: 1.1rem; justify-content: center; flex-wrap: wrap; }
+        .nav-links a { color: #fff; text-decoration: none; font-size: 0.9rem; opacity: 0.85; border-bottom: 1px dashed rgba(255,255,255,0.5); padding-bottom: 1px; }
+        .nav-links a:hover { opacity: 1; }
+
+        /* Suggested flow */
+        .flow {
+            background: var(--cream); border-radius: 18px; padding: 1.1rem 1.3rem;
+            box-shadow: 0 14px 34px rgba(0,0,0,0.22); margin-bottom: 1.3rem;
+        }
+        .flow h2 { font-size: 1rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--pumpkin); margin-bottom: 0.6rem; }
+        .flow p { font-size: 0.98rem; line-height: 1.5; }
+        .flow b { color: var(--ink); }
+
+        #map { height: 380px; border-radius: 20px; box-shadow: 0 18px 45px rgba(0,0,0,0.3); margin-bottom: 1.5rem; z-index: 1; }
+
+        .opt {
+            background: var(--cream); border-radius: 18px; padding: 1.1rem 1.2rem;
+            box-shadow: 0 14px 34px rgba(0,0,0,0.22); margin-bottom: 1rem;
+            display: flex; gap: 1rem; align-items: flex-start;
+        }
+        .num {
+            flex-shrink: 0; width: 42px; height: 42px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--amber), var(--pumpkin));
+            color: #4a2c00; font-weight: 800; font-size: 1.15rem;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: inset 0 0 0 2px rgba(255,255,255,0.4);
+        }
+        .opt-body { flex: 1; min-width: 0; }
+        .tag {
+            display: inline-block; font-size: 0.66rem; font-weight: 800; letter-spacing: 0.5px;
+            text-transform: uppercase; padding: 0.15rem 0.5rem; border-radius: 999px; color: #fff; margin-bottom: 0.35rem;
+        }
+        .opt-name { font-size: 1.2rem; font-weight: 800; }
+        .opt-meta { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); margin: 0.1rem 0 0.4rem; }
+        .opt-blurb { font-size: 0.95rem; line-height: 1.45; }
+        .opt-note { font-size: 0.85rem; color: var(--muted); margin-top: 0.4rem; }
+        .opt-links { margin-top: 0.6rem; display: flex; gap: 0.9rem; flex-wrap: wrap; }
+        .opt-links a { font-size: 0.82rem; font-weight: 700; color: var(--cranberry); text-decoration: none; border-bottom: 1px solid rgba(193,53,43,0.4); padding-bottom: 1px; }
+        .opt-links a:hover { border-bottom-color: var(--cranberry); }
+
+        .finale {
+            background: linear-gradient(135deg, var(--amber), var(--pumpkin)); color: #4a2c00;
+            border-radius: 18px; padding: 1.2rem 1.3rem; box-shadow: 0 14px 34px rgba(0,0,0,0.28);
+            margin-bottom: 1rem;
+        }
+        .finale h3 { font-size: 1.25rem; font-weight: 800; }
+        .finale p { font-size: 0.95rem; line-height: 1.45; margin-top: 0.3rem; }
+
+        .foot { text-align: center; color: rgba(255,255,255,0.8); font-size: 0.82rem; margin-top: 1.4rem; line-height: 1.5; }
+
+        .pin { width: 30px; height: 30px; border-radius: 50% 50% 50% 0; background: var(--cranberry); transform: rotate(-45deg); box-shadow: 0 3px 8px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; border: 2px solid #fff; }
+        .pin span { transform: rotate(45deg); color: #fff; font-weight: 800; font-size: 0.85rem; }
+
+        @media (max-width: 560px) {
+            .hero h1 { font-size: 2rem; }
+            #map { height: 320px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="hero">
+            <div class="eyebrow">Larson Thanksgiving · Friday, Nov 27</div>
+            <h1>Princeton Party 🎨</h1>
+            <div class="sub">Day trip to the Schemicks' in Princeton / West Windsor, NJ</div>
+            <div class="crew">👨‍👩‍👧‍👦 9 kids (7–17) + 8 adults</div>
+            <div class="nav-links">
+                <a href="week.html">← the week</a>
+                <a href="index.html">the countdown</a>
+            </div>
+        </div>
+
+        <div class="flow">
+            <h2>One way to play it</h2>
+            <p><b>Morning:</b> burn some energy — Sky Zone or ice skating. <b>Midday:</b> lunch and a stroll around downtown Princeton. <b>Afternoon:</b> the sculpture park or a campus wander. <b>Dusk:</b> cap the night at the Palmer Square tree lighting. Mix and match to taste — no wrong answers.</p>
+        </div>
+
+        <div id="map"></div>
+
+        <div id="options"></div>
+
+        <div class="finale">
+            <h3>🎄 Cap the night: Palmer Square Tree Lighting</h3>
+            <p>We land on the day-after-Thanksgiving tradition in downtown Princeton — a 65-foot spruce lit with 32,000+ lights, live music, and holiday buzz. A perfect finale before the long goodbye.</p>
+        </div>
+
+        <div class="foot">
+            Map pins are approximate — tap “Directions” on any spot for exact routing.<br>
+            Sculpture park and skating want advance tickets/times — worth a quick check the day before.
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <script>
+        const HOME = { name: "West Windsor (the Schemicks')", lat: 40.2966, lng: -74.6236 };
+
+        const OPTIONS = [
+            {
+                name: 'Sky Zone Hamilton', tag: 'Energy Burn', tagColor: '#e07a3f',
+                place: 'Hamilton · ~10 min', addr: '17 Quakerbridge Plaza Dr, Hamilton, NJ 08619',
+                lat: 40.2793, lng: -74.6562,
+                blurb: 'Wall-to-wall trampolines plus a warrior/ninja course, a warped wall, and a climbing tower. The fastest way to wear out the 7-to-17 crowd (and any brave adults).',
+                note: 'Fri hours ~12–9 PM. Grippy socks required; book a jump window online.',
+                web: 'https://www.skyzone.com/hamilton/'
+            },
+            {
+                name: 'Mercer County Park Ice Skating', tag: 'Energy Burn', tagColor: '#e07a3f',
+                place: 'West Windsor · minutes away', addr: '1638 Old Trenton Rd, West Windsor, NJ 08550',
+                lat: 40.2649, lng: -74.6303,
+                blurb: 'Classic mixed-age winter fun right next door. Big rink, rentals on site, easy for a group of 17 to spread out on the ice.',
+                note: 'Public-skate sessions vary by day — adults ~$8, kids ~$6, skate rental ~$4. Check the day\'s schedule.',
+                web: 'https://www.mercercounty.org/departments/mercer-county-park-commission/ice-skating-rink'
+            },
+            {
+                name: 'Grounds For Sculpture', tag: 'Art & Nature', tagColor: '#6a8f4f',
+                place: 'Hamilton · ~15 min', addr: '80 Sculptors Way, Hamilton, NJ 08619',
+                lat: 40.2320, lng: -74.6945,
+                blurb: 'A magical 42-acre sculpture park and arboretum with 300+ works — including life-size, hidden-around-every-corner pieces that kids and adults both love hunting for.',
+                note: 'Entry is by advance timed ticket and capacity is limited — book ahead. Open ~10 AM–5 PM.',
+                web: 'https://www.groundsforsculpture.org/'
+            },
+            {
+                name: 'Downtown Princeton & Palmer Square', tag: 'Stroll & Shop', tagColor: '#f2b705',
+                place: 'Princeton', addr: 'Palmer Square, Princeton, NJ 08542',
+                lat: 40.3496, lng: -74.6593,
+                blurb: 'The most walkable stretch around — shops, cafés, and green space steps from the Princeton University campus. Easy lunch, easy browsing, and gorgeous to wander with a big group.',
+                note: 'Black Friday brings holiday crowds and the tree lighting later in the day (see below).',
+                web: 'https://palmersquare.com/things-to-do/family-fun/'
+            },
+            {
+                name: 'Princeton University Art Museum', tag: 'Culture · Free', tagColor: '#6a8f4f',
+                place: 'Princeton campus', addr: 'Princeton University Art Museum, Princeton, NJ 08544',
+                lat: 40.3489, lng: -74.6567,
+                blurb: 'The newly reopened museum is free to visit and runs hands-on family “Creativity Labs” — a warm, low-key option if the weather turns or the little ones need a reset.',
+                note: 'Free admission. Worth confirming holiday hours before you go.',
+                web: 'https://artmuseum.princeton.edu/'
+            }
+        ];
+
+        function mapsSearch(o) {
+            return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(o.name + ', ' + o.addr);
+        }
+
+        // ---- Option cards ----
+        const optionsEl = document.getElementById('options');
+        OPTIONS.forEach((o, i) => {
+            const el = document.createElement('div');
+            el.className = 'opt';
+            el.innerHTML = '<div class="num">' + (i + 1) + '</div>'
+                + '<div class="opt-body">'
+                + '<span class="tag" style="background:' + o.tagColor + '">' + o.tag + '</span>'
+                + '<div class="opt-name">' + o.name + '</div>'
+                + '<div class="opt-meta">' + o.place + '</div>'
+                + '<div class="opt-blurb">' + o.blurb + '</div>'
+                + '<div class="opt-note">' + o.note + '</div>'
+                + '<div class="opt-links">'
+                + '<a href="' + o.web + '" target="_blank" rel="noopener">🌐 Website</a>'
+                + '<a href="' + mapsSearch(o) + '" target="_blank" rel="noopener">📍 Directions</a>'
+                + '</div></div>';
+            optionsEl.appendChild(el);
+        });
+
+        // ---- Leaflet map ----
+        const map = L.map('map', { scrollWheelZoom: false });
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors', maxZoom: 19
+        }).addTo(map);
+
+        const bounds = [];
+        OPTIONS.forEach((o, i) => {
+            const icon = L.divIcon({
+                className: '', html: '<div class="pin"><span>' + (i + 1) + '</span></div>',
+                iconSize: [30, 30], iconAnchor: [15, 30], popupAnchor: [0, -28]
+            });
+            L.marker([o.lat, o.lng], { icon: icon }).addTo(map)
+                .bindPopup('<b>' + (i + 1) + '. ' + o.name + '</b><br>' + o.place);
+            bounds.push([o.lat, o.lng]);
+        });
+
+        // Home base marker (a friendly star-ish dot).
+        L.circleMarker([HOME.lat, HOME.lng], {
+            radius: 8, color: '#fff', weight: 2, fillColor: '#764ba2', fillOpacity: 1
+        }).addTo(map).bindPopup('<b>' + HOME.name + '</b><br>home base');
+        bounds.push([HOME.lat, HOME.lng]);
+
+        map.fitBounds(L.latLngBounds(bounds).pad(0.15));
+    </script>
+</body>
+</html>
