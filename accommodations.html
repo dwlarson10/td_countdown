@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Where You're Staying</title>
+    <title>Accommodations</title>
     <style>
         :root {
             --bg1: #667eea; --bg2: #764ba2;
@@ -28,7 +28,15 @@
         .nav-links a { color: #fff; text-decoration: none; font-size: 0.9rem; opacity: 0.85; border-bottom: 1px dashed rgba(255,255,255,0.5); padding-bottom: 1px; }
         .nav-links a:hover { opacity: 1; }
 
-        .rooms { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 1.1rem; }
+        .section-label {
+            color: #fff; text-transform: uppercase; letter-spacing: 2px;
+            font-size: 0.85rem; font-weight: 700; opacity: 0.92; margin: 1.6rem 0 1rem;
+        }
+        .section-label:first-of-type { margin-top: 0.5rem; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 1.1rem; }
+
+        /* Room cards (link to a room page) */
         .room {
             background: var(--cream); border-radius: 20px; overflow: hidden;
             box-shadow: 0 14px 36px rgba(0,0,0,0.22); text-decoration: none; color: var(--ink);
@@ -45,6 +53,20 @@
         .room-who { font-size: 0.92rem; color: var(--muted); margin-top: 0.15rem; }
         .room-cta { margin-top: 0.7rem; font-size: 0.85rem; font-weight: 800; color: var(--cranberry); }
 
+        /* Amenity cards */
+        .amenity {
+            background: var(--cream); border-radius: 20px; padding: 1.3rem 1.3rem 1.4rem;
+            box-shadow: 0 14px 36px rgba(0,0,0,0.22);
+        }
+        .amenity .ic {
+            width: 52px; height: 52px; border-radius: 15px; font-size: 1.7rem;
+            display: flex; align-items: center; justify-content: center; margin-bottom: 0.7rem;
+            background: linear-gradient(135deg, #fdeccd, #f8d9a8);
+        }
+        .amenity h3 { font-size: 1.2rem; font-weight: 800; }
+        .amenity .when { font-size: 0.74rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--pumpkin); margin: 0.15rem 0 0.45rem; }
+        .amenity p { font-size: 0.95rem; line-height: 1.45; color: var(--ink); }
+
         @media (max-width: 560px) { .hero h1 { font-size: 2rem; } }
     </style>
 </head>
@@ -52,15 +74,19 @@
     <div class="wrap">
         <div class="hero">
             <div class="eyebrow">Larson Thanksgiving · Philadelphia</div>
-            <h1>Where You're Staying 🛏️</h1>
-            <div class="sub">Find your room for the week</div>
+            <h1>Accommodations 🏡</h1>
+            <div class="sub">Where you sleep — and everything that makes it home</div>
             <div class="nav-links">
                 <a href="index.html">← the countdown</a>
                 <a href="week.html">the week</a>
             </div>
         </div>
 
-        <div class="rooms" id="rooms"></div>
+        <div class="section-label">🛏️ Where You're Staying</div>
+        <div class="grid" id="rooms"></div>
+
+        <div class="section-label">✨ House Amenities</div>
+        <div class="grid" id="amenities"></div>
     </div>
 
     <script>
@@ -70,29 +96,46 @@
             { name: "The Kids' Room",    who: "The kid crew · ages 7–17",       href: 'room-kids.html', folder: 'images/rooms/kids/', emoji: '🧸' }
         ];
 
+        const AMENITIES = [
+            { ic: '☕', name: 'Coffee Bar',       when: 'Every morning',  blurb: 'Fired up every morning — espresso, drip, and the fixings to build your perfect cup before the day gets going.' },
+            { ic: '🍸', name: 'Nightly Cocktails', when: 'Each evening',   blurb: 'A fresh cocktail every evening once the kids wind down. A different pour each night — bartender\'s choice.' },
+            { ic: '📺', name: 'New Girl Marathon', when: 'All week',       blurb: 'The big screen is running New Girl all week long. Grab a blanket, pile onto the couch, and settle in.' }
+        ];
+
         function probe(src) {
             return new Promise(res => { const i = new Image(); i.onload = () => res(true); i.onerror = () => res(false); i.src = src; });
         }
 
-        const wrap = document.getElementById('rooms');
+        // ---- Rooms ----
+        const roomsEl = document.getElementById('rooms');
         ROOMS.forEach(async r => {
             const a = document.createElement('a');
-            a.className = 'room';
-            a.href = r.href;
+            a.className = 'room'; a.href = r.href;
             a.innerHTML = '<div class="thumb">' + r.emoji + '</div>'
                 + '<div class="room-body">'
                 + '<div class="room-name">' + r.name + '</div>'
                 + '<div class="room-who">' + r.who + '</div>'
                 + '<div class="room-cta">View room →</div>'
                 + '</div>';
-            wrap.appendChild(a);
-            // Use the room's first photo as the thumbnail if it exists.
+            roomsEl.appendChild(a);
             const first = r.folder + '1.jpg';
             if (await probe(first)) {
                 const thumb = a.querySelector('.thumb');
                 thumb.style.backgroundImage = 'url("' + first + '")';
                 thumb.textContent = '';
             }
+        });
+
+        // ---- Amenities ----
+        const amenEl = document.getElementById('amenities');
+        AMENITIES.forEach(m => {
+            const d = document.createElement('div');
+            d.className = 'amenity';
+            d.innerHTML = '<div class="ic">' + m.ic + '</div>'
+                + '<h3>' + m.name + '</h3>'
+                + '<div class="when">' + m.when + '</div>'
+                + '<p>' + m.blurb + '</p>';
+            amenEl.appendChild(d);
         });
     </script>
 </body>
