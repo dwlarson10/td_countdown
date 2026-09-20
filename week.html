@@ -94,6 +94,20 @@
         }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 26px rgba(0,0,0,0.35); }
 
+        /* Featured event banner */
+        .featured {
+            display: block; text-decoration: none; color: #fff;
+            background: linear-gradient(135deg, #2e2140, #46315f);
+            border: 2px solid #e8b923; border-radius: 18px;
+            padding: 1.1rem 1.3rem; margin-bottom: 1.6rem;
+            box-shadow: 0 14px 34px rgba(0,0,0,0.28);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .featured:hover { transform: translateY(-2px); box-shadow: 0 18px 40px rgba(0,0,0,0.36); }
+        .featured .fx-label { font-size: 0.72rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: #e8b923; }
+        .featured .fx-title { font-size: 1.2rem; font-weight: 800; margin: 0.15rem 0; }
+        .featured .fx-sub { font-size: 0.9rem; opacity: 0.9; }
+
         /* ---------- Timeline ---------- */
         .timeline { position: relative; }
         .day {
@@ -144,6 +158,7 @@
         }
         .pill.feast { background: var(--amber); color: #4a2c00; }
         .pill.today { background: var(--cranberry); color: #fff; }
+        .pill.champ { background: #46315f; color: #e8b923; }
 
         .foot { text-align: center; color: rgba(255,255,255,0.8); font-size: 0.82rem; margin-top: 1.6rem; }
 
@@ -176,6 +191,12 @@
             <button class="btn" id="calBtn">＋ Add the week to your calendar</button>
         </div>
 
+        <a class="featured" href="championships.html">
+            <div class="fx-label">🏆 Featured this week</div>
+            <div class="fx-title">The Presentation Championships</div>
+            <div class="fx-sub">Sealed-topic PowerPoint showdown — presentations across Tuesday, Wednesday & Thursday nights. Tap for the rules.</div>
+        </a>
+
         <div class="timeline" id="timeline"></div>
 
         <div class="foot">Times TBD — this is the shape of the week. Yell if you want to add or move something.</div>
@@ -189,13 +210,13 @@
               title: 'Nola\'s Marathon & Dave Arrives', blurb: 'Nola\'s up early to run the Philadelphia Marathon — we might all head out to cheer her on along the course. Later, Dave rolls into town and the crew is complete.' },
             { date: '2026-11-23', dow: 'Monday',    short: 'Mon', mon: 'Nov', dnum: '23', icon: '🏀',
               title: 'Spa Day & Sixers Game', blurb: 'A choose-your-own kind of day: the ladies head to the spa to relax and recharge, while the gentlemen take in Sixers vs. the Portland Trail Blazers. Regroup after and trade the day\'s best stories.' },
-            { date: '2026-11-24', dow: 'Tuesday',   short: 'Tue', mon: 'Nov', dnum: '24', icon: '🧀',
-              title: 'Cheese Steak Fest', blurb: 'A proper Philly cheesesteak crawl through four classics. Whiz vs. provolone — pick a side.',
+            { date: '2026-11-24', dow: 'Tuesday',   short: 'Tue', mon: 'Nov', dnum: '24', icon: '🧀', champ: true,
+              title: 'Cheese Steak Fest', blurb: 'A proper Philly cheesesteak crawl through four classics. Whiz vs. provolone — pick a side. Presentation Championships kick off tonight.',
               link: { href: 'cheesesteak.html', label: '🗺️ See the crawl map' } },
-            { date: '2026-11-25', dow: 'Wednesday', short: 'Wed', mon: 'Nov', dnum: '25', icon: '🥾',
-              title: 'Prep & a Wissahickon Hike', blurb: 'Roll up the sleeves for some Thanksgiving prep, then lace up for a hike in the Wissahickon — a perfect warm-up for Thursday morning\'s turkey trot.' },
-            { date: '2026-11-26', dow: 'Thursday',  short: 'Thu', mon: 'Nov', dnum: '26', icon: '🦃',
-              title: 'Fun Run & Food', blurb: 'Kick off the big day with the Face to Face Turkey Trot on Forbidden Drive in the Wissahickon — 9:00 AM start, with a 5-mile run and a 1-mile fun run/walk, all benefiting a Germantown nonprofit. Then home to host the main event. Happy Thanksgiving!', feast: true,
+            { date: '2026-11-25', dow: 'Wednesday', short: 'Wed', mon: 'Nov', dnum: '25', icon: '🥾', champ: true,
+              title: 'Prep & a Wissahickon Hike', blurb: 'Roll up the sleeves for some Thanksgiving prep, then lace up for a hike in the Wissahickon — a perfect warm-up for Thursday morning\'s turkey trot. More presentations after dark.' },
+            { date: '2026-11-26', dow: 'Thursday',  short: 'Thu', mon: 'Nov', dnum: '26', icon: '🦃', champ: true,
+              title: 'Fun Run & Food', blurb: 'Kick off the big day with the Face to Face Turkey Trot on Forbidden Drive in the Wissahickon — 9:00 AM start, with a 5-mile run and a 1-mile fun run/walk, all benefiting a Germantown nonprofit. Then home to host the main event — and the grand finale of the Presentation Championships. Happy Thanksgiving!', feast: true,
               link: { href: 'https://runsignup.com/Race/PA/Philadelphia/FacetoFaceTurkeyTrot', label: '🦃 Turkey Trot details & sign-up' } },
             { date: '2026-11-27', dow: 'Friday',    short: 'Fri', mon: 'Nov', dnum: '27', icon: '🎉',
               title: 'Princeton Party', blurb: 'A day trip across the river to Princeton / West Windsor, NJ to see the Schemick family. Loads of options for our crew — a whimsical sculpture park, a stroll through downtown Princeton, trampolines, ice skating, and the Palmer Square tree lighting to cap the night.',
@@ -254,6 +275,7 @@
             let pills = '';
             if (d.date === TODAY) pills += '<span class="pill today">Today</span>';
             if (d.feast) pills += '<span class="pill feast">Feast Day</span>';
+            if (d.champ) pills += '<span class="pill champ">🏆 Presentations</span>';
             const linkExtra = d.link && /^https?:/.test(d.link.href) ? ' target="_blank" rel="noopener"' : '';
             const linkHtml = d.link
                 ? '<a class="day-link" href="' + d.link.href + '"' + linkExtra + '>' + d.link.label + '</a>'
