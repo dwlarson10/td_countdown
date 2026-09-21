@@ -287,9 +287,9 @@
         //  Until SHEET_ID is filled in, the page shows sample data.
         // ============================================================
         const CONFIG = {
-            SHEET_ID: '',
-            SHEET_NAME: 'Potluck',
-            EDIT_URL: ''
+            SHEET_ID: '16nos9kW-MTE-8XHf3Q9m6p8WZH9eqzcJRb2xDARwKEA',
+            SHEET_NAME: '',
+            EDIT_URL: 'https://docs.google.com/spreadsheets/d/16nos9kW-MTE-8XHf3Q9m6p8WZH9eqzcJRb2xDARwKEA/edit'
         };
 
         // Category display order + icons. Unknown categories still show,
@@ -323,7 +323,8 @@
         // ---------- Google Sheet fetch (CSV via gviz, no API key) ----------
         function sheetUrl() {
             const base = 'https://docs.google.com/spreadsheets/d/' + CONFIG.SHEET_ID + '/gviz/tq';
-            const params = 'tqx=out:csv&sheet=' + encodeURIComponent(CONFIG.SHEET_NAME) + '&t=' + Date.now();
+            const sheetParam = CONFIG.SHEET_NAME ? '&sheet=' + encodeURIComponent(CONFIG.SHEET_NAME) : '';
+            const params = 'tqx=out:csv' + sheetParam + '&t=' + Date.now();
             return base + '?' + params;
         }
 
