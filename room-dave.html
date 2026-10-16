@@ -50,19 +50,17 @@
             color: var(--pumpkin); margin-bottom: 0.9rem;
         }
 
-        /* Gallery */
-        .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.6rem; }
-        .gallery img {
-            width: 100%; aspect-ratio: 4 / 3; object-fit: cover;
-            border-radius: 12px; cursor: pointer; background: #efe5d5;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.15); transition: transform 0.15s ease;
+        /* Amenities list (the room's gloriously random contents) */
+        .items { list-style: none; }
+        .items li {
+            display: flex; gap: 0.7rem; align-items: baseline;
+            padding: 0.55rem 0; border-bottom: 1px solid var(--line);
+            font-size: 1.02rem; font-weight: 600;
         }
-        .gallery img:hover { transform: scale(1.03); }
-        .empty-photos {
-            text-align: center; padding: 2.2rem 1rem; color: var(--muted);
-            border: 2px dashed var(--line); border-radius: 14px; font-size: 0.95rem;
+        .items li:last-child { border-bottom: none; }
+        .items li::before {
+            content: '✓'; color: var(--leaf); font-weight: 800; flex-shrink: 0;
         }
-        .empty-photos .big { font-size: 2rem; display: block; margin-bottom: 0.4rem; }
 
         /* Facts */
         .facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.8rem; }
@@ -73,15 +71,6 @@
         .coming-soon { color: var(--muted); font-size: 0.95rem; }
 
         .notes li { margin: 0 0 0.5rem 1.1rem; font-size: 0.96rem; line-height: 1.4; }
-
-        /* Lightbox */
-        .lightbox {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.9);
-            display: none; align-items: center; justify-content: center; z-index: 100; padding: 1.5rem;
-        }
-        .lightbox.open { display: flex; }
-        .lightbox img { max-width: 100%; max-height: 100%; border-radius: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
-        .lightbox .close { position: absolute; top: 1rem; right: 1.3rem; color: #fff; font-size: 2.2rem; cursor: pointer; line-height: 1; }
 
         @media (max-width: 560px) { .hero h1 { font-size: 2rem; } }
     </style>
@@ -100,8 +89,8 @@
         </div>
 
         <div class="card">
-            <h2>The Room</h2>
-            <div id="photos"></div>
+            <h2>Featured Amenities</h2>
+            <ul class="items" id="items"></ul>
         </div>
 
         <div class="card">
@@ -115,63 +104,37 @@
         </div>
     </div>
 
-    <div class="lightbox" id="lightbox">
-        <span class="close" id="lbClose">&times;</span>
-        <img id="lbImg" alt="Room photo" />
-    </div>
-
     <script>
-        // ============================================================
-        //  Fill this in for the room. Photos: drop images named
-        //  1.jpg, 2.jpg, 3.jpg … into  images/rooms/dave/
-        //  and they show up automatically (discovery stops at the first gap).
-        // ============================================================
         const ROOM = {
-            folder: 'images/rooms/dave/',
-            // facts: add {ic, lbl, val} items, e.g.
-            //   { ic: '🛏️', lbl: 'Beds', val: '1 queen + 1 twin' },
-            //   { ic: '🚿', lbl: 'Bathroom', val: 'Shared, down the hall' },
-            //   { ic: '📶', lbl: 'Wi-Fi', val: 'LarsonGuest / turkey2026' },
+            items: [
+                'Endless supply of dirty cups',
+                'Banjo',
+                '1/16-full perfume bottles',
+                'Music theater books',
+                'Impromptu a cappella singing (not when you ask for it)'
+            ],
             facts: [
                 { ic: '🛏️', lbl: 'Beds', val: '1 queen bed' },
-                { ic: '📍', lbl: 'Room', val: 'Nola\'s room' }
+                { ic: '📍', lbl: 'Room', val: "Nola's room" }
             ],
             notes: [
                 'Rose & Ellie are bunking downstairs in the basement with the rest of the kids.'
             ]
         };
 
-        // ---------- Photo gallery (auto-discovered) ----------
-        function probe(src) {
-            return new Promise(res => { const i = new Image(); i.onload = () => res(true); i.onerror = () => res(false); i.src = src; });
-        }
-        async function discover(folder) {
-            const found = [];
-            for (let n = 1; n <= 100; n++) {
-                const src = folder + n + '.jpg';
-                if (await probe(src)) found.push(src); else break;
-            }
-            return found;
-        }
-        function renderPhotos(srcs) {
-            const el = document.getElementById('photos');
-            if (!srcs.length) {
-                el.innerHTML = '<div class="empty-photos"><span class="big">📷</span>Photos coming soon.</div>';
+        function renderItems() {
+            const el = document.getElementById('items');
+            if (!ROOM.items.length) {
+                el.outerHTML = '<div class="coming-soon">A full inventory is coming soon.</div>';
                 return;
             }
-            const grid = document.createElement('div');
-            grid.className = 'gallery';
-            srcs.forEach(src => {
-                const img = document.createElement('img');
-                img.src = src; img.alt = 'Room photo';
-                img.addEventListener('click', () => openLightbox(src));
-                grid.appendChild(img);
+            ROOM.items.forEach(it => {
+                const li = document.createElement('li');
+                li.textContent = it;
+                el.appendChild(li);
             });
-            el.innerHTML = '';
-            el.appendChild(grid);
         }
 
-        // ---------- Facts ----------
         function renderFacts() {
             const el = document.getElementById('facts');
             if (!ROOM.facts.length) {
@@ -189,7 +152,6 @@
             el.appendChild(grid);
         }
 
-        // ---------- Notes ----------
         function renderNotes() {
             if (!ROOM.notes.length) return;
             document.getElementById('notesCard').hidden = false;
@@ -197,17 +159,9 @@
             ROOM.notes.forEach(n => { const li = document.createElement('li'); li.textContent = n; ul.appendChild(li); });
         }
 
-        // ---------- Lightbox ----------
-        const lb = document.getElementById('lightbox');
-        function openLightbox(src) { document.getElementById('lbImg').src = src; lb.classList.add('open'); }
-        function closeLightbox() { lb.classList.remove('open'); }
-        document.getElementById('lbClose').addEventListener('click', closeLightbox);
-        lb.addEventListener('click', e => { if (e.target === lb) closeLightbox(); });
-        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
-
+        renderItems();
         renderFacts();
         renderNotes();
-        discover(ROOM.folder).then(renderPhotos);
     </script>
 </body>
 </html>
