@@ -7,3 +7,7 @@ Thumbs.db
 *.swp
 .idea/
 .vscode/
+
+# Stray artifacts
+.Rhistory
+summary.md
