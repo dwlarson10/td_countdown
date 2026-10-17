@@ -1,0 +1,61 @@
+## File Summary
+
+### HTML Files
+- `accommodations.html` - 155 lines
+- `championships.html` - 205 lines
+- `cheesesteak.html` - 240 lines
+- `index.html` - 534 lines
+- `potluck.html` - 526 lines
+- `princeton.html` - 234 lines
+- `room-ben.html` - 212 lines
+- `room-dave.html` - 213 lines
+- `room-kids.html` - 212 lines
+- `video.html` - 111 lines
+- `week.html` - 346 lines
+
+### Image Files
+- `images/rooms/ben/` - 0 lines
+- `images/rooms/dave/` - 0 lines
+- `images/rooms/kids/` - 0 lines
+- `photo_1.jpg` - 0 lines
+- `photo_10.jpg` - 0 lines
+- `photo_11.jpg` - 0 lines
+- `photo_12.jpg` - 0 lines
+- `photo_13.jpg` - 0 lines
+- `photo_14.jpg` - 0 lines
+- `photo_15.jpg` - 0 lines
+- `photo_16.jpg` - 0 lines
+- `photo_17.jpg` - 0 lines
+- `photo_18.jpg` - 0 lines
+- `photo_19.jpg` - 0 lines
+- `photo_2.jpg` - 0 lines
+- `photo_20.jpg` - 0 lines
+- `photo_21.jpg` - 0 lines
+- `photo_22.jpg` - 0 lines
+- `photo_23.jpg` - 0 lines
+- `photo_24.jpg` - 0 lines
+- `photo_25.jpg` - 0 lines
+- `photo_26.jpg` - 0 lines
+- `photo_27.jpg` - 0 lines
+- `photo_28.jpg` - 0 lines
+- `photo_29.jpg` - 0 lines
+- `photo_3.jpg` - 0 lines
+- `photo_30.jpg` - 0 lines
+- `photo_31.jpg` - 0 lines
+- `photo_32.jpg` - 0 lines
+- `photo_33.jpg` - 0 lines
+- `photo_34.jpg` - 0 lines
+- `photo_35.jpg` - 0 lines
+- `photo_36.jpg` - 0 lines
+- `photo_37.jpg` - 0 lines
+- `photo_38.jpg` - 0 lines
+- `photo_39.jpg` - 0 lines
+- `photo_4.jpg` - 0 lines
+- `photo_40.jpg` - 0 lines
+- `photo_41.jpg` - 0 lines
+- `photo_5.jpg` - 0 lines
+- `photo_6.jpg` - 0 lines
+- `photo_7.jpg` - 0 lines
+- `photo_8.jpg` - 0 lines
+- `photo_9.jpg` - 0 lines
+- `slaps.jpg` - 0 lines
